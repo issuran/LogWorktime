@@ -1,6 +1,5 @@
 package br.com.optimizer7.logworktime
 
-import android.support.v4.content.ContextCompat.startActivity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
