@@ -24,8 +24,7 @@ class LogTimeActivity : AppCompatActivity() , EasyPermissions.PermissionCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
+        setContentView(R.layout.log_time_activity)
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>?) {
