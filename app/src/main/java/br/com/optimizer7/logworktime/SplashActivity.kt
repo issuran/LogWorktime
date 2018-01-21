@@ -16,6 +16,7 @@ class SplashActivity : AppCompatActivity() {
 
         val intent = Intent(this, LogTimeActivity::class.java)
         startActivity(intent)
+        Thread.sleep(1000)
         finish()
     }
 }
