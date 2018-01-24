@@ -1,12 +1,9 @@
 package br.com.optimizer7.logworktime
 
-import android.app.Dialog
 import android.app.ProgressDialog
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import android.widget.Button
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -14,15 +11,14 @@ import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.google.api.services.sheets.v4.model.ValueRange
-import kotlinx.android.synthetic.main.log_time_activity.*
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.IOException
 import java.util.*
-import android.widget.TimePicker
-import android.text.format.DateFormat.is24HourFormat
 import android.app.TimePickerDialog
-import android.support.v4.app.DialogFragment
-import android.text.format.DateFormat
+import android.app.TimePickerDialog.OnTimeSetListener
+import android.util.Log
+import android.view.MotionEvent
+import android.widget.EditText
 
 
 /**
@@ -45,23 +41,31 @@ class LogTimeActivity : AppCompatActivity() , EasyPermissions.PermissionCallback
         super.onCreate(savedInstanceState)
         setContentView(R.layout.log_time_activity)
 
-        //val button = findViewById<Button>(R.id.button2)
+        val ed1 = findViewById<EditText>(R.id.editText1)
+
+        val timePickerDialogListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+
+            Log.i("",""+hourOfDay+":"+minute);
+        }
+
+        ed1.setOnTouchListener({ v, event ->
+            if( event.getAction() == MotionEvent.ACTION_UP){
+                TimePickerDialog(this, timePickerDialogListener, 10, 10, true).show()
+            }
+            true
+        })
+
+        val mTimeSetListener = OnTimeSetListener {
+            view, hourOfDay, minute ->
+            Log.i("", "" + hourOfDay + ":" + minute)
+        }
 
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
                 applicationContext, Arrays.asList(*SCOPES))
                 .setBackOff(ExponentialBackOff())
-
-//        button2.setOnClickListener(View.OnClickListener {
-//            getResultsFromApi(mCredential)
-//        })
-
-        fun showTimePickerDialog(v: View) {
-            val newFragment = TimePickerFragment()
-            newFragment.show(supportFragmentManager, "timePicker")
-        }
-
     }
+
 
     private fun getResultsFromApi(cred: GoogleAccountCredential) {
         MakeRequestTask(cred).execute()
@@ -128,23 +132,5 @@ class LogTimeActivity : AppCompatActivity() , EasyPermissions.PermissionCallback
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
-
-    override fun onCreateDialog(savedInstanceState: Bundle): Dialog {
-        // Use the current time as the default values for the picker
-        val c = Calendar.getInstance()
-        val hour = c.get(Calendar.HOUR_OF_DAY)
-        val minute = c.get(Calendar.MINUTE)
-
-        // Create a new instance of TimePickerDialog and return it
-        return TimePickerDialog(getActivity(), this, hour, minute,
-                DateFormat.is24HourFormat(getActivity()))
-    }
-
-    override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        // Do something with the time chosen by the user
     }
 }
