@@ -39,10 +39,10 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Inicio" />
+                android:text="Begin - Worktime" />
 
             <EditText
-                android:id="@+id/editText1"
+                android:id="@+id/edtBeginWorktime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -70,10 +70,10 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Almoço - Saída" />
+                android:text="Begin - Lunch" />
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/edtBeginLunch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -101,10 +101,10 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Almoço - Volta" />
+                android:text="Done - Lunch" />
 
             <EditText
-                android:id="@+id/editText5"
+                android:id="@+id/edtStopLunch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -132,10 +132,10 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Almoço - Volta" />
+                android:text="Done - Worktime" />
 
             <EditText
-                android:id="@+id/editText7"
+                android:id="@+id/edtStopWorktime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -163,7 +163,7 @@
                 android:layout_width="100dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
-                android:text="Logar Hora"
+                android:text="Log Worktime"
                 android:textSize="12sp" />
 
         </LinearLayout>

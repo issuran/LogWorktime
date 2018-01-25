@@ -18,7 +18,14 @@ import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.widget.EditText
+import android.widget.TimePicker
+import kotlinx.android.synthetic.main.log_time_activity.*
+import kotlinx.android.synthetic.main.log_time_activity.view.*
+import android.widget.Toast
+
+
 
 
 /**
@@ -37,34 +44,67 @@ class LogTimeActivity : AppCompatActivity() , EasyPermissions.PermissionCallback
     lateinit var mCredential: GoogleAccountCredential
     lateinit var mProgress: ProgressDialog
 
+    var beginWorktime: EditText? = null
+    var beginLunch: EditText? = null
+    var stopLunch: EditText? = null
+    var stopWorktime: EditText? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.log_time_activity)
 
-        val ed1 = findViewById<EditText>(R.id.editText1)
+        beginWorktime = findViewById<EditText>(R.id.edtBeginWorktime)
+        beginLunch = findViewById<EditText>(R.id.edtBeginLunch)
+        stopLunch = findViewById<EditText>(R.id.edtStopLunch)
+        stopWorktime = findViewById<EditText>(R.id.edtStopWorktime)
 
-        val timePickerDialogListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-
-            Log.i("",""+hourOfDay+":"+minute);
-        }
-
-        ed1.setOnTouchListener({ v, event ->
-            if( event.getAction() == MotionEvent.ACTION_UP){
-                TimePickerDialog(this, timePickerDialogListener, 10, 10, true).show()
-            }
-            true
-        })
-
-        val mTimeSetListener = OnTimeSetListener {
-            view, hourOfDay, minute ->
-            Log.i("", "" + hourOfDay + ":" + minute)
-        }
+        handleSelectWorktime()
 
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
                 applicationContext, Arrays.asList(*SCOPES))
                 .setBackOff(ExponentialBackOff())
     }
+
+    fun handleSelectWorktime(){
+
+        beginWorktime?.setOnTouchListener({ v, event ->
+            if( event.getAction() == MotionEvent.ACTION_UP){
+                TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
+                    beginWorktime?.setText("" + hourOfDay + ":" + minute)
+                }, 10, 10, true).show()
+            }
+            true
+        })
+
+        beginLunch?.setOnTouchListener({ v, event ->
+            if( event.getAction() == MotionEvent.ACTION_UP){
+                TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
+                    beginLunch?.setText("" + hourOfDay + ":" + minute)
+                }, 10, 10, true).show()
+            }
+            true
+        })
+
+        stopLunch?.setOnTouchListener({ v, event ->
+            if( event.getAction() == MotionEvent.ACTION_UP){
+                TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
+                    stopLunch?.setText("" + hourOfDay + ":" + minute)
+                }, 10, 10, true).show()
+            }
+            true
+        })
+
+        stopWorktime?.setOnTouchListener({ v, event ->
+            if( event.getAction() == MotionEvent.ACTION_UP){
+                TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
+                    stopWorktime?.setText("" + hourOfDay + ":" + minute)
+                }, 10, 10, true).show()
+            }
+            true
+        })
+    }
+
 
 
     private fun getResultsFromApi(cred: GoogleAccountCredential) {
