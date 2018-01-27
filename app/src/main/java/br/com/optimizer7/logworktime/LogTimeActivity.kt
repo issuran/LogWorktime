@@ -17,7 +17,9 @@ import java.io.IOException
 import java.util.*
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -29,9 +31,13 @@ import android.widget.Toast
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
 
 
 /**
@@ -47,12 +53,13 @@ val PREF_ACCOUNT_NAME = "accountName"
 
 class LogTimeActivity : AppCompatActivity() {
 
-    lateinit var mCredential: GoogleAccountCredential
+    lateinit var mCredential: FirebaseAuth
 
     var beginWorktime: EditText? = null
     var beginLunch: EditText? = null
     var stopLunch: EditText? = null
     var stopWorktime: EditText? = null
+    var logWorktime: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,15 +74,22 @@ class LogTimeActivity : AppCompatActivity() {
         beginLunch = findViewById(R.id.edtBeginLunch)
         stopLunch = findViewById(R.id.edtStopLunch)
         stopWorktime = findViewById(R.id.edtStopWorktime)
+        logWorktime = findViewById(R.id.btLogWorktime)
 
         handleSelectWorktime()
 
+        handleLogWorktime()
+
         // Initialize credentials and service object.
-        mCredential = GoogleAccountCredential.usingOAuth2(
-                applicationContext, Arrays.asList(*SCOPES))
-                .setBackOff(ExponentialBackOff())
+        mCredential = FirebaseAuth.getInstance()
+
+        getWorktimeLoggedTodayFromApi()
+
     }
 
+    /**
+     * Handle select time
+     */
     @SuppressLint("ClickableViewAccessibility")
     fun handleSelectWorktime(){
 
@@ -116,11 +130,24 @@ class LogTimeActivity : AppCompatActivity() {
         })
     }
 
+    fun handleLogWorktime(){
+        logWorktime?.setOnClickListener(View.OnClickListener {
+            println("Log Worktime")
+            //TODO:Log Worktime from the chosen day
+
+        })
+    }
+
+    // Create Menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
+    /**
+     * MENU toolbar
+     * - Logout
+     */
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
             R.id.action_settings -> {
@@ -131,6 +158,9 @@ class LogTimeActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    /**
+     * Logout function
+     */
     fun logout(){
         AuthUI.getInstance()
                 .signOut(this!!)
@@ -140,5 +170,72 @@ class LogTimeActivity : AppCompatActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         this!!.finish()
+    }
+
+    /**
+     * Attempt to call the API, after verifying that all the preconditions are
+     * satisfied. The preconditions are: Google Play Services installed, an
+     * account was selected and the device currently has online access. If any
+     * of the preconditions are not satisfied, the app will prompt the user as
+     * appropriate.
+     */
+    fun getWorktimeLoggedTodayFromApi() {
+        if (!isGooglePlayServicesAvailable()) {
+            acquireGooglePlayServices()
+        } else if (mCredential.currentUser == null) {
+            chooseAccount()
+        } else if (!isDeviceOnline()) {
+            Toast.makeText(this@LogTimeActivity, "No network connection available.",
+                    Toast.LENGTH_LONG).show()
+        } else {
+            //TODO:Retrieve info
+        }
+    }
+
+    /**
+     * Check that Google Play services APK is installed and up to date.
+     * @return true if Google Play Services is available and up to
+     * date on this device; false otherwise.
+     */
+    private fun isGooglePlayServicesAvailable(): Boolean {
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(this)
+        return connectionStatusCode == ConnectionResult.SUCCESS
+    }
+
+    /**
+     * Attempt to resolve a missing, out-of-date, invalid or disabled Google
+     * Play Services installation via a user dialog, if possible.
+     */
+    private fun acquireGooglePlayServices() {
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(this)
+        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
+            val apiAvailability = GoogleApiAvailability.getInstance()
+            val dialog = apiAvailability.getErrorDialog(
+                    this@LogTimeActivity,
+                    connectionStatusCode,
+                    REQUEST_GOOGLE_PLAY_SERVICES)
+            dialog.show()
+        }
+    }
+
+    /**
+     * Select account
+     */
+    fun chooseAccount(){
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        this!!.finish()
+    }
+
+    /**
+     * Checks whether the device currently has a network connection.
+     * @return true if the device has a network connection, false otherwise.
+     */
+    private fun isDeviceOnline(): Boolean {
+        val connMgr = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connMgr.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }

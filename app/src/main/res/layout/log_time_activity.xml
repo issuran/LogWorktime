@@ -169,6 +169,7 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
             <Button
+                android:id="@+id/btLogWorktime"
                 android:layout_width="100dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
