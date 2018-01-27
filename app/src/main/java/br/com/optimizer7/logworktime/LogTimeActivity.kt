@@ -17,6 +17,7 @@ import java.io.IOException
 import java.util.*
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
+import android.content.Intent
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -25,8 +26,12 @@ import android.widget.TimePicker
 import kotlinx.android.synthetic.main.log_time_activity.*
 import kotlinx.android.synthetic.main.log_time_activity.view.*
 import android.widget.Toast
-
-
+import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
+import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 
 
 /**
@@ -53,10 +58,15 @@ class LogTimeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.log_time_activity)
 
-        beginWorktime = findViewById<EditText>(R.id.edtBeginWorktime)
-        beginLunch = findViewById<EditText>(R.id.edtBeginLunch)
-        stopLunch = findViewById<EditText>(R.id.edtStopLunch)
-        stopWorktime = findViewById<EditText>(R.id.edtStopWorktime)
+        val myToolbar = findViewById<View>(R.id.my_toolbar) as Toolbar
+        setSupportActionBar(myToolbar)
+
+        myToolbar.inflateMenu(R.menu.main_menu)
+
+        beginWorktime = findViewById(R.id.edtBeginWorktime)
+        beginLunch = findViewById(R.id.edtBeginLunch)
+        stopLunch = findViewById(R.id.edtStopLunch)
+        stopWorktime = findViewById(R.id.edtStopWorktime)
 
         handleSelectWorktime()
 
@@ -104,5 +114,31 @@ class LogTimeActivity : AppCompatActivity() {
             }
             true
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId){
+            R.id.action_settings -> {
+                println("Logout")
+                logout()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun logout(){
+        AuthUI.getInstance()
+                .signOut(this!!)
+                .addOnCompleteListener(OnCompleteListener {
+                    task: Task<Void> -> println("I am out")
+                })
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        this!!.finish()
     }
 }
