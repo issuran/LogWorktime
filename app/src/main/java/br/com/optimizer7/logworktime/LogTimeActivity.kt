@@ -1,5 +1,6 @@
 package br.com.optimizer7.logworktime
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.os.AsyncTask
 import android.os.Bundle
@@ -39,10 +40,9 @@ val REQUEST_PERMISSION_GET_ACCOUNTS = 1003
 val SCOPES = arrayOf(SheetsScopes.SPREADSHEETS)
 val PREF_ACCOUNT_NAME = "accountName"
 
-class LogTimeActivity : AppCompatActivity()  {
+class LogTimeActivity : AppCompatActivity() {
 
     lateinit var mCredential: GoogleAccountCredential
-    lateinit var mProgress: ProgressDialog
 
     var beginWorktime: EditText? = null
     var beginLunch: EditText? = null
@@ -66,6 +66,7 @@ class LogTimeActivity : AppCompatActivity()  {
                 .setBackOff(ExponentialBackOff())
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     fun handleSelectWorktime(){
 
         beginWorktime?.setOnTouchListener({ v, event ->
@@ -95,8 +96,8 @@ class LogTimeActivity : AppCompatActivity()  {
             true
         })
 
-        stopWorktime?.setOnTouchListener({ v, event ->
-            if( event.getAction() == MotionEvent.ACTION_UP){
+        var onTouchListener = stopWorktime?.setOnTouchListener({ v, event ->
+            if (event.getAction() == MotionEvent.ACTION_UP) {
                 TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
                     stopWorktime?.setText("" + hourOfDay + ":" + minute)
                 }, 10, 10, true).show()
