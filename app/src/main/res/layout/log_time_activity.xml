@@ -18,16 +18,26 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
+        <TextView
+            android:id="@+id/txtUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/message_welcome_user_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+            android:layout_marginLeft="16dp" />
+
         <CalendarView
             android:id="@+id/calendarView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/txtUserName" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -48,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Begin - Worktime" />
+                android:text="@string/hint_message_begin_worktime" />
 
             <EditText
                 android:id="@+id/edtBeginWorktime"
@@ -56,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:editable="false"
-                android:hint="Click to log time"/>
+                android:hint="@string/hint_message_click_to_log"/>
 
         </LinearLayout>
 
@@ -79,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Begin - Lunch" />
+                android:text="@string/hint_message_begin_lunch" />
 
             <EditText
                 android:id="@+id/edtBeginLunch"
@@ -87,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:editable="false"
-                android:hint="Click to log time"/>
+                android:hint="@string/hint_message_click_to_log"/>
 
         </LinearLayout>
 
@@ -110,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Done - Lunch" />
+                android:text="@string/hint_message_done_lunch" />
 
             <EditText
                 android:id="@+id/edtStopLunch"
@@ -118,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:editable="false"
-                android:hint="Click to log time"/>
+                android:hint="@string/hint_message_click_to_log"/>
 
         </LinearLayout>
 
@@ -141,7 +151,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Done - Worktime" />
+                android:text="@string/hint_message_done_worktime" />
 
             <EditText
                 android:id="@+id/edtStopWorktime"
@@ -149,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:editable="false"
-                android:hint="Click to log time"/>
+                android:hint="@string/hint_message_click_to_log"/>
 
         </LinearLayout>
 
@@ -173,7 +183,7 @@
                 android:layout_width="100dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
-                android:text="Log Worktime"
+                android:text="@string/button_log_worktime"
                 android:textSize="12sp" />
 
         </LinearLayout>

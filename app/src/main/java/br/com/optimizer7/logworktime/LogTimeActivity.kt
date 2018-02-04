@@ -1,6 +1,9 @@
 package br.com.optimizer7.logworktime
 
+import android.Manifest
+import android.accounts.AccountManager
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.ProgressDialog
 import android.os.AsyncTask
 import android.os.Bundle
@@ -32,28 +35,38 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import br.com.optimizer7.logworktime.Model.DateWorktime
+import br.com.optimizer7.logworktime.Model.Worktime
 import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.api.client.http.HttpRequestInitializer
+import com.google.api.client.util.DateTime
+import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import kotlin.collections.HashMap
 
 
 /**
  * Created by Tiago on 07/01/2018.
  */
 
-val REQUEST_ACCOUNT_PICKER = 1000
-val REQUEST_AUTHORIZATION = 1001
-val REQUEST_GOOGLE_PLAY_SERVICES = 1002
-val REQUEST_PERMISSION_GET_ACCOUNTS = 1003
-val SCOPES = arrayOf(SheetsScopes.SPREADSHEETS)
-val PREF_ACCOUNT_NAME = "accountName"
-
 class LogTimeActivity : AppCompatActivity() {
 
-    lateinit var mCredential: FirebaseAuth
+    val mRootRef = FirebaseDatabase.getInstance().getReference()
+    val map = HashMap<String, Any>()
+
+    val mLogWorktimeRef = mRootRef.child("logworktimes")
+
+    lateinit var currentUser: FirebaseAuth
 
     var beginWorktime: EditText? = null
     var beginLunch: EditText? = null
@@ -64,11 +77,18 @@ class LogTimeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.log_time_activity)
+        map.put("logtime", ServerValue.TIMESTAMP)
 
         val myToolbar = findViewById<View>(R.id.my_toolbar) as Toolbar
         setSupportActionBar(myToolbar)
 
         myToolbar.inflateMenu(R.menu.main_menu)
+
+        // Check if user is signed in (non-null) and update UI accordingly.
+        currentUser = FirebaseAuth.getInstance()
+        if (currentUser != null) {
+            updateUserNameLogged(currentUser.currentUser!!)
+        }
 
         beginWorktime = findViewById(R.id.edtBeginWorktime)
         beginLunch = findViewById(R.id.edtBeginLunch)
@@ -78,13 +98,30 @@ class LogTimeActivity : AppCompatActivity() {
 
         handleSelectWorktime()
 
-        handleLogWorktime()
+        logWorktime()
+    }
 
-        // Initialize credentials and service object.
-        mCredential = FirebaseAuth.getInstance()
+//    override fun onStart() {
+//        super.onStart()
+//
+//        mLogWorktimeRef.addValueEventListener(object : ValueEventListener{
+//            override fun onDataChange(p0: DataSnapshot?) {
+//                val text = p0!!.getValue(String.javaClass)
+//                print(""+text)
+//            }
+//
+//            override fun onCancelled(p0: DatabaseError?) {
+//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//            }
+//        })
+//    }
 
-        getWorktimeLoggedTodayFromApi()
+    fun updateUserNameLogged(user: FirebaseUser){
+        txtUserName.text = "Bom dia : ${user.displayName}"
+    }
 
+    fun updateLoggedWorktimeForToday(user: FirebaseUser){
+        //TODO : CALL FIREBASE DATABASE TO RETRIEVE TODAY's INFO IN CASE THE DAY SELECTED HAS ALREADY BEEN LOGGED
     }
 
     /**
@@ -120,7 +157,7 @@ class LogTimeActivity : AppCompatActivity() {
             true
         })
 
-        var onTouchListener = stopWorktime?.setOnTouchListener({ v, event ->
+        stopWorktime?.setOnTouchListener({ v, event ->
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
                     stopWorktime?.setText("" + hourOfDay + ":" + minute)
@@ -130,13 +167,44 @@ class LogTimeActivity : AppCompatActivity() {
         })
     }
 
-    fun handleLogWorktime(){
+    //TODO:Log Worktime from the chosen day
+    fun logWorktime(){
         logWorktime?.setOnClickListener(View.OnClickListener {
             println("Log Worktime")
-            //TODO:Log Worktime from the chosen day
+
+            var worktime = retrieveLoggedTime()
+
+            mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).setValue(worktime)
 
         })
     }
+
+    fun retrieveLoggedTime() : DateWorktime {
+        val beginWorktime = beginWorktime?.getText().toString()
+        val beginLunch = beginLunch?.getText().toString()
+        val stopLunch = stopLunch?.getText().toString()
+        val stopWorktime = stopWorktime?.getText().toString()
+
+        val dateNow = DateTime(SimpleDateFormat("yyyy-MM-dd").format(Date()))
+
+        return DateWorktime(dateNow, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime))
+    }
+
+//        logWorktime?.setOnClickListener(View.OnClickListener {
+//            println("Log Worktime")
+//
+//            if (!isGooglePlayServicesAvailable()) {
+//                acquireGooglePlayServices()
+//            } else if (mCredential.getSelectedAccountName() == null) {
+//                chooseAccount()
+//            } else if (!isDeviceOnline()) {
+//                Toast.makeText(this@LogTimeActivity, "No network connection available.",
+//                        Toast.LENGTH_LONG).show()
+//            } else {
+//                //MakeRequestTask(mCredential).execute()
+//            }
+//        })
+//    }
 
     // Create Menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -170,72 +238,5 @@ class LogTimeActivity : AppCompatActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         this!!.finish()
-    }
-
-    /**
-     * Attempt to call the API, after verifying that all the preconditions are
-     * satisfied. The preconditions are: Google Play Services installed, an
-     * account was selected and the device currently has online access. If any
-     * of the preconditions are not satisfied, the app will prompt the user as
-     * appropriate.
-     */
-    fun getWorktimeLoggedTodayFromApi() {
-        if (!isGooglePlayServicesAvailable()) {
-            acquireGooglePlayServices()
-        } else if (mCredential.currentUser == null) {
-            chooseAccount()
-        } else if (!isDeviceOnline()) {
-            Toast.makeText(this@LogTimeActivity, "No network connection available.",
-                    Toast.LENGTH_LONG).show()
-        } else {
-            //TODO:Retrieve info
-        }
-    }
-
-    /**
-     * Check that Google Play services APK is installed and up to date.
-     * @return true if Google Play Services is available and up to
-     * date on this device; false otherwise.
-     */
-    private fun isGooglePlayServicesAvailable(): Boolean {
-        val apiAvailability = GoogleApiAvailability.getInstance()
-        val connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(this)
-        return connectionStatusCode == ConnectionResult.SUCCESS
-    }
-
-    /**
-     * Attempt to resolve a missing, out-of-date, invalid or disabled Google
-     * Play Services installation via a user dialog, if possible.
-     */
-    private fun acquireGooglePlayServices() {
-        val apiAvailability = GoogleApiAvailability.getInstance()
-        val connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(this)
-        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
-            val apiAvailability = GoogleApiAvailability.getInstance()
-            val dialog = apiAvailability.getErrorDialog(
-                    this@LogTimeActivity,
-                    connectionStatusCode,
-                    REQUEST_GOOGLE_PLAY_SERVICES)
-            dialog.show()
-        }
-    }
-
-    /**
-     * Select account
-     */
-    fun chooseAccount(){
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        this!!.finish()
-    }
-
-    /**
-     * Checks whether the device currently has a network connection.
-     * @return true if the device has a network connection, false otherwise.
-     */
-    private fun isDeviceOnline(): Boolean {
-        val connMgr = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connMgr.activeNetworkInfo
-        return networkInfo != null && networkInfo.isConnected
     }
 }

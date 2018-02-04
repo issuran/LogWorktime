@@ -356,7 +356,7 @@ public class MainActivity extends Activity
          * @throws IOException
          */
         private List<String> getDataFromApi() throws IOException {
-            String spreadsheetId = "11mXQ5av_U0KG9AgWCEE7pSGomvCzyB2nLoRcySYtNno";//"1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
+            String spreadsheetId = "11mXQ5av_U0KG9AgWCEE7pSGomvCzyB2nLoRcySYtNno";
             String range = "Janeiro!B2:E";
             List<String> results = new ArrayList<String>();
             ValueRange response = this.mService.spreadsheets().values()

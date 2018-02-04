@@ -35,6 +35,7 @@ class LoginActivity : AppCompatActivity(){
                     .createSignInIntentBuilder()
                     .setAvailableProviders(
                             Arrays.asList(
+                                    AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
                                     AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
                     .setIsSmartLockEnabled(false)
                     .setLogo(R.mipmap.ic_launcher)
@@ -56,25 +57,10 @@ class LoginActivity : AppCompatActivity(){
                 val intent = Intent(this, LogTimeActivity::class.java)
                 startActivity(intent)
                 finish()
-                // ...
             } else {
                 // Sign in failed, check response for error code
                 // ...
             }
         }
-    }
-
-
-    public override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = mAuth?.getCurrentUser()
-        if (currentUser != null) {
-            updateUI(currentUser)
-        }
-    }
-
-    fun updateUI(user: FirebaseUser){
-        print("LOGADO : ${user.displayName}")
     }
 }

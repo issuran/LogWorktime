@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Log Worktime</string>
+
+    <string name="message_welcome_user_name">Bom dia : Usuário</string>
+
+    <string name="hint_message_begin_worktime">Begin - Worktime</string>
+    <string name="hint_message_begin_lunch">Begin - Lunch</string>
+    <string name="hint_message_done_lunch">Done - Lunch</string>
+    <string name="hint_message_done_worktime">Done - Worktime</string>
+
+    <string name="hint_message_click_to_log">Click to log time</string>
+    
+    <string name="button_log_worktime">Log Worktime</string>
 </resources>
