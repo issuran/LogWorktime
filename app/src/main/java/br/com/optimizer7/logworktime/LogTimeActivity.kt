@@ -104,16 +104,7 @@ class LogTimeActivity : AppCompatActivity() {
 //    override fun onStart() {
 //        super.onStart()
 //
-//        mLogWorktimeRef.addValueEventListener(object : ValueEventListener{
-//            override fun onDataChange(p0: DataSnapshot?) {
-//                val text = p0!!.getValue(String.javaClass)
-//                print(""+text)
-//            }
-//
-//            override fun onCancelled(p0: DatabaseError?) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            }
-//        })
+
 //    }
 
     fun updateUserNameLogged(user: FirebaseUser){
@@ -174,8 +165,20 @@ class LogTimeActivity : AppCompatActivity() {
 
             var worktime = retrieveLoggedTime()
 
-            mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).setValue(worktime)
+            mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
 
+                override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                    //dataSnapshot?.child(currentUser.uid)!!.child(currentUser.currentUser!!.displayName).child(worktime.dateWorktime)!!.getValue() != null
+                    if (dataSnapshot!!.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktime.dateWorktime).exists()) {
+                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).setValue(worktime)
+                    } else {
+                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).push().setValue(worktime)
+                    }
+                }
+            })
         })
     }
 
@@ -185,7 +188,7 @@ class LogTimeActivity : AppCompatActivity() {
         val stopLunch = stopLunch?.getText().toString()
         val stopWorktime = stopWorktime?.getText().toString()
 
-        val dateNow = DateTime(SimpleDateFormat("yyyy-MM-dd").format(Date()))
+        val dateNow = SimpleDateFormat("yyyy-MM-dd").format(Date()).toString()
 
         return DateWorktime(dateNow, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime))
     }
