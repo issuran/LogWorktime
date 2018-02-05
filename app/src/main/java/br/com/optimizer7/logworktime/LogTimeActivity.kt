@@ -204,7 +204,6 @@ class LogTimeActivity : AppCompatActivity() {
                 println("List of Logged Worktime")
                 val intent = Intent(this, ListLoggedWorktime::class.java)
                 startActivity(intent)
-                finish()
             }
         }
         return super.onOptionsItemSelected(item)
