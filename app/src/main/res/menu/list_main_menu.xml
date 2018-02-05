@@ -6,9 +6,9 @@
 
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
-        android:title="@string/list_logged_worktime"
-        android:id="@+id/action_list_logged_worktime"
-        android:icon="@mipmap/ic_logged_time"
+        android:title="@string/log_worktime"
+        android:id="@+id/action_log_worktime"
+        android:icon="@mipmap/ic_log_time"
         app:showAsAction="ifRoom"/>
 
     <!-- Settings, should always be in the overflow -->
