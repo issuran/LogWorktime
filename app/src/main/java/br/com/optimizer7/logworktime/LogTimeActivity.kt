@@ -26,15 +26,12 @@ import android.net.ConnectivityManager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.widget.EditText
-import android.widget.TimePicker
 import kotlinx.android.synthetic.main.log_time_activity.*
 import kotlinx.android.synthetic.main.log_time_activity.view.*
-import android.widget.Toast
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
+import android.widget.*
 import br.com.optimizer7.logworktime.Model.DateWorktime
 import br.com.optimizer7.logworktime.Model.Worktime
 import com.firebase.ui.auth.AuthUI
@@ -61,8 +58,12 @@ import kotlin.collections.HashMap
 
 class LogTimeActivity : AppCompatActivity() {
 
+    /**
+     * Variables
+     */
     val mRootRef = FirebaseDatabase.getInstance().getReference()
-    val map = HashMap<String, Any>()
+
+    var dateSelected: String? = null
 
     val mLogWorktimeRef = mRootRef.child("logworktimes")
 
@@ -73,11 +74,11 @@ class LogTimeActivity : AppCompatActivity() {
     var stopLunch: EditText? = null
     var stopWorktime: EditText? = null
     var logWorktime: Button? = null
+    var calendarPick: CalendarView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.log_time_activity)
-        map.put("logtime", ServerValue.TIMESTAMP)
 
         val myToolbar = findViewById<View>(R.id.my_toolbar) as Toolbar
         setSupportActionBar(myToolbar)
@@ -95,31 +96,37 @@ class LogTimeActivity : AppCompatActivity() {
         stopLunch = findViewById(R.id.edtStopLunch)
         stopWorktime = findViewById(R.id.edtStopWorktime)
         logWorktime = findViewById(R.id.btLogWorktime)
+        calendarPick = findViewById(R.id.calendarView)
+
+        dateSelected = SimpleDateFormat("yyyy-MM-dd").format(Date()).toString()
 
         handleSelectWorktime()
 
         logWorktime()
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//
-
-//    }
-
+    /**
+     * Set User name logged
+     */
     fun updateUserNameLogged(user: FirebaseUser){
         txtUserName.text = "Bom dia : ${user.displayName}"
     }
 
-    fun updateLoggedWorktimeForToday(user: FirebaseUser){
-        //TODO : CALL FIREBASE DATABASE TO RETRIEVE TODAY's INFO IN CASE THE DAY SELECTED HAS ALREADY BEEN LOGGED
-    }
-
     /**
-     * Handle select time
+     * Handle select time and select calendar day
      */
     @SuppressLint("ClickableViewAccessibility")
     fun handleSelectWorktime(){
+
+        calendarPick!!.setOnDateChangeListener { view, year, month, dayOfMonth ->
+
+            dateSelected = ""+year+"-"+(month+1)+"-"+dayOfMonth
+
+            beginWorktime?.setText("")
+            beginLunch?.setText("")
+            stopLunch?.setText("")
+            stopWorktime?.setText("")
+        }
 
         beginWorktime?.setOnTouchListener({ v, event ->
             if( event.getAction() == MotionEvent.ACTION_UP){
@@ -158,58 +165,47 @@ class LogTimeActivity : AppCompatActivity() {
         })
     }
 
-    //TODO:Log Worktime from the chosen day
+    /**
+     * Persist data on Firebase Database
+     */
     fun logWorktime(){
         logWorktime?.setOnClickListener(View.OnClickListener {
             println("Log Worktime")
 
-            var worktime = retrieveLoggedTime()
+            var worktimeModel = retrieveLoggedTime()
 
             mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError?) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot?) {
                     //dataSnapshot?.child(currentUser.uid)!!.child(currentUser.currentUser!!.displayName).child(worktime.dateWorktime)!!.getValue() != null
-                    if (dataSnapshot!!.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktime.dateWorktime).exists()) {
-                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).setValue(worktime)
-                    } else {
-                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).push().setValue(worktime)
-                    }
+//                    if (dataSnapshot!!.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).exists()) {
+                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
+//                    } else {
+//                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
+//                    }
                 }
             })
         })
     }
 
+    /**
+     * Retrieve object with input data from user
+     */
     fun retrieveLoggedTime() : DateWorktime {
         val beginWorktime = beginWorktime?.getText().toString()
         val beginLunch = beginLunch?.getText().toString()
         val stopLunch = stopLunch?.getText().toString()
         val stopWorktime = stopWorktime?.getText().toString()
 
-        val dateNow = SimpleDateFormat("yyyy-MM-dd").format(Date()).toString()
-
-        return DateWorktime(dateNow, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime))
+        return DateWorktime(dateSelected, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime))
     }
 
-//        logWorktime?.setOnClickListener(View.OnClickListener {
-//            println("Log Worktime")
-//
-//            if (!isGooglePlayServicesAvailable()) {
-//                acquireGooglePlayServices()
-//            } else if (mCredential.getSelectedAccountName() == null) {
-//                chooseAccount()
-//            } else if (!isDeviceOnline()) {
-//                Toast.makeText(this@LogTimeActivity, "No network connection available.",
-//                        Toast.LENGTH_LONG).show()
-//            } else {
-//                //MakeRequestTask(mCredential).execute()
-//            }
-//        })
-//    }
-
-    // Create Menu
+    /**
+     * Create Menu
+     */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
