@@ -1,15 +1,14 @@
 package br.com.optimizer7.logworktime;
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
-import com.google.firebase.auth.FirebaseUser
-import com.firebase.ui.auth.IdpResponse
-import android.content.Intent
 
 /**
  * Created by Tiago on 27/01/2018.
@@ -17,7 +16,7 @@ import android.content.Intent
 class LoginActivity : AppCompatActivity(){
 
     private val RC_SIGN_IN = 2
-    private var mAuth: FirebaseAuth? = null
+//    private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +25,7 @@ class LoginActivity : AppCompatActivity(){
         val auth = FirebaseAuth.getInstance()
         if (auth.currentUser != null) {
             // already signed in
-            val user = FirebaseAuth.getInstance().currentUser
+//            val user = FirebaseAuth.getInstance().currentUser
             val intent = Intent(this, LogTimeActivity::class.java)
             startActivity(intent)
             finish()
@@ -53,7 +52,7 @@ class LoginActivity : AppCompatActivity(){
 
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
-                val user = FirebaseAuth.getInstance().currentUser
+//                val user = FirebaseAuth.getInstance().currentUser
                 val intent = Intent(this, LogTimeActivity::class.java)
                 startActivity(intent)
                 finish()

@@ -4,9 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".LogTimeActivity">
 
+    <!-- "Mark Favorite", should appear as action button if possible -->
+    <item
+        android:title="@string/list_logged_worktime"
+        android:id="@+id/action_favorite"
+        android:icon="@mipmap/ic_logged_time"
+        app:showAsAction="ifRoom"/>
+
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
-        android:title="Logout"
+        android:title="@string/logout"
         app:showAsAction="never"/>
 
 

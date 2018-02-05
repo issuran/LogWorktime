@@ -11,4 +11,6 @@
     <string name="hint_message_click_to_log">Click to log time</string>
     
     <string name="button_log_worktime">Log Worktime</string>
+    <string name="list_logged_worktime">List Logged Worktime</string>
+    <string name="logout">Logout</string>
 </resources>
