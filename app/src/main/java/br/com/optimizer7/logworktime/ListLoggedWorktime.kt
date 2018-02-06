@@ -1,5 +1,6 @@
 package br.com.optimizer7.logworktime
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -7,12 +8,18 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
+import android.widget.CalendarView
+import android.widget.TextView
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 
 class ListLoggedWorktime : AppCompatActivity() {
+
+    var txtSelectedMonth: TextView? = null
+    var calendarPick: CalendarView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +30,23 @@ class ListLoggedWorktime : AppCompatActivity() {
         setSupportActionBar(myToolbar)
 
         myToolbar.inflateMenu(R.menu.list_main_menu)
+
+        calendarPick = findViewById(R.id.listCalendarView)
+        calendarPick!!.visibility=View.GONE
+
+        txtSelectedMonth = findViewById(R.id.txtSelectedMonth)
+
+        handleClicks()
+    }
+
+    fun handleClicks() {
+        txtSelectedMonth?.setOnClickListener(View.OnClickListener {
+            if(calendarPick!!.visibility==View.GONE){
+                calendarPick!!.visibility=View.VISIBLE
+            }else{
+                calendarPick!!.visibility=View.GONE
+            }
+        })
     }
 
     /**
