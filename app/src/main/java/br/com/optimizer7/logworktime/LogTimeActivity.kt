@@ -42,6 +42,8 @@ class LogTimeActivity : AppCompatActivity() {
     val mRootRef = FirebaseDatabase.getInstance().getReference()
 
     var dateSelected: String? = null
+    var monthSelected: String? = null
+    var yearSelected: String? = null
 
     val mLogWorktimeRef = mRootRef.child("logworktimes")
 
@@ -53,6 +55,9 @@ class LogTimeActivity : AppCompatActivity() {
     var stopWorktime: EditText? = null
     var logWorktime: Button? = null
     var calendarPick: CalendarView? = null
+
+    val cal = Calendar.getInstance()
+    val month_date = SimpleDateFormat("MMMM")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +83,9 @@ class LogTimeActivity : AppCompatActivity() {
 
         dateSelected = SimpleDateFormat("yyyy-MM-dd").format(Date()).toString()
 
+        monthSelected = month_date.format(cal.time)
+        yearSelected = SimpleDateFormat("yyyy").format(Date()).toString()
+
         handleSelectWorktime()
 
         logWorktime()
@@ -91,6 +99,13 @@ class LogTimeActivity : AppCompatActivity() {
     }
 
     /**
+     * Get the month's full name
+     */
+    fun getMonthFullName(date: Date){
+        monthSelected = month_date.format(date)
+    }
+
+    /**
      * Handle select time and select calendar day
      */
     @SuppressLint("ClickableViewAccessibility")
@@ -99,6 +114,8 @@ class LogTimeActivity : AppCompatActivity() {
         calendarPick!!.setOnDateChangeListener { view, year, month, dayOfMonth ->
 
             dateSelected = ""+year+"-"+(month+1)+"-"+dayOfMonth
+            getMonthFullName(Date(year, month, dayOfMonth))
+            yearSelected = year.toString()
 
             beginWorktime?.setText("")
             beginLunch?.setText("")
@@ -160,10 +177,12 @@ class LogTimeActivity : AppCompatActivity() {
                 override fun onDataChange(dataSnapshot: DataSnapshot?) {
                     //dataSnapshot?.child(currentUser.uid)!!.child(currentUser.currentUser!!.displayName).child(worktime.dateWorktime)!!.getValue() != null
 //                    if (dataSnapshot!!.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).exists()) {
-                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
-//                    } else {
-//                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
-//                    }
+                        mLogWorktimeRef.child(currentUser.uid)
+                                .child(currentUser.currentUser!!.displayName)
+                                .child(worktimeModel.yearWorktime)
+                                .child(worktimeModel.monthWorktime)
+                                .child(worktimeModel.dateWorktime)
+                                .setValue(worktimeModel.worktime)
                 }
             })
         })
@@ -178,7 +197,7 @@ class LogTimeActivity : AppCompatActivity() {
         val stopLunch = stopLunch?.getText().toString()
         val stopWorktime = stopWorktime?.getText().toString()
 
-        return DateWorktime(dateSelected, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime))
+        return DateWorktime(yearSelected, monthSelected, dateSelected, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime))
     }
 
     /**

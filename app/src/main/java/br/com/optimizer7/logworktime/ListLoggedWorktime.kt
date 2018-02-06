@@ -15,8 +15,23 @@ import android.widget.TextView
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class ListLoggedWorktime : AppCompatActivity() {
+    /**
+     * Variables
+     */
+    val mRootRef = FirebaseDatabase.getInstance().getReference()
+
+    var dateSelected: String? = null
+
+    val mLogWorktimeRef = mRootRef.child("logworktimes")
+
+    lateinit var currentUser: FirebaseAuth
 
     var txtSelectedMonth: TextView? = null
     var calendarPick: CalendarView? = null
@@ -31,12 +46,17 @@ class ListLoggedWorktime : AppCompatActivity() {
 
         myToolbar.inflateMenu(R.menu.list_main_menu)
 
+        // Check if user is signed in (non-null) and update UI accordingly.
+        currentUser = FirebaseAuth.getInstance()
+
         calendarPick = findViewById(R.id.listCalendarView)
         calendarPick!!.visibility=View.GONE
 
         txtSelectedMonth = findViewById(R.id.txtSelectedMonth)
 
         handleClicks()
+
+        loadLoggedWorktime()
     }
 
     fun handleClicks() {
@@ -45,6 +65,23 @@ class ListLoggedWorktime : AppCompatActivity() {
                 calendarPick!!.visibility=View.VISIBLE
             }else{
                 calendarPick!!.visibility=View.GONE
+            }
+        })
+    }
+
+    fun loadLoggedWorktime(){
+        mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError?) {
+
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                //dataSnapshot?.child(currentUser.uid)!!.child(currentUser.currentUser!!.displayName).child(worktime.dateWorktime)!!.getValue() != null
+//                    if (dataSnapshot!!.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).exists()) {
+//                mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
+//                    } else {
+//                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
+//                    }
             }
         })
     }
