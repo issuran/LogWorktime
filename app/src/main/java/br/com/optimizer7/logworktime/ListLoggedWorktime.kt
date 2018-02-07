@@ -12,6 +12,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.CalendarView
 import android.widget.TextView
+import br.com.optimizer7.logworktime.Model.DateWorktime
+import br.com.optimizer7.logworktime.Model.Worktime
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -28,6 +30,8 @@ class ListLoggedWorktime : AppCompatActivity() {
     val mRootRef = FirebaseDatabase.getInstance().getReference()
 
     var dateSelected: String? = null
+    var monthSelected: String? = null
+    var yearSelected: String? = null
 
     val mLogWorktimeRef = mRootRef.child("logworktimes")
 
@@ -71,6 +75,9 @@ class ListLoggedWorktime : AppCompatActivity() {
 
     fun loadLoggedWorktime(){
         mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
+
+            var worktimeModel = callbackLoggedTime()
+
             override fun onCancelled(p0: DatabaseError?) {
 
             }
@@ -82,8 +89,20 @@ class ListLoggedWorktime : AppCompatActivity() {
 //                    } else {
 //                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
 //                    }
+                mLogWorktimeRef.child(currentUser.uid)
+                        .child(currentUser.currentUser!!.displayName)
+                        .child(worktimeModel.yearWorktime)
+                        .child(worktimeModel.monthWorktime)
+                        .child(worktimeModel.dateWorktime)
             }
         })
+    }
+
+    /**
+     * Retrieve object with input data from user
+     */
+    fun callbackLoggedTime() : DateWorktime {
+        return DateWorktime(yearSelected, monthSelected, dateSelected)
     }
 
     /**
