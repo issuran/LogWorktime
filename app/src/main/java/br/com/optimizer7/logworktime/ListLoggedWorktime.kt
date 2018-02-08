@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -22,6 +23,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ListLoggedWorktime : AppCompatActivity() {
     /**
@@ -33,9 +36,14 @@ class ListLoggedWorktime : AppCompatActivity() {
     var monthSelected: String? = null
     var yearSelected: String? = null
 
+    var mOutputText: TextView? = null
+
     val mLogWorktimeRef = mRootRef.child("logworktimes")
 
     lateinit var currentUser: FirebaseAuth
+
+    val cal = Calendar.getInstance()
+    val month_date = SimpleDateFormat("MMMM")
 
     var txtSelectedMonth: TextView? = null
     var calendarPick: CalendarView? = null
@@ -56,7 +64,15 @@ class ListLoggedWorktime : AppCompatActivity() {
         calendarPick = findViewById(R.id.listCalendarView)
         calendarPick!!.visibility=View.GONE
 
+        dateSelected = SimpleDateFormat("yyyy-MM-dd").format(Date()).toString()
+        monthSelected = month_date.format(cal.time)
+        yearSelected = SimpleDateFormat("yyyy").format(Date()).toString()
+
         txtSelectedMonth = findViewById(R.id.txtSelectedMonth)
+
+        mOutputText = findViewById(R.id.temp)
+        mOutputText!!.isVerticalScrollBarEnabled = true
+
 
         handleClicks()
 
@@ -73,6 +89,8 @@ class ListLoggedWorktime : AppCompatActivity() {
         })
     }
 
+    val listOfWorktime: MutableList<Worktime> = mutableListOf()
+
     fun loadLoggedWorktime(){
         mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
 
@@ -83,19 +101,56 @@ class ListLoggedWorktime : AppCompatActivity() {
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot?) {
+
+                val chu = dataSnapshot!!.children
+                chu.forEach{
+                    println("TESTEEEEEEEEEEEEEEEEEE")
+                   println(it.toString())
+                }
+
+                dataSnapshot!!
+                        ?.child(currentUser.uid)
+                        ?.child(currentUser.currentUser!!.displayName)
+                        ?.child(worktimeModel.yearWorktime)
+                        ?.child(worktimeModel.monthWorktime)
+                        ?.children
+                        ?.mapNotNullTo(listOfWorktime){
+                    it.getValue<Worktime>(Worktime::class.java)
+                }
+
+                updateUI()
+
                 //dataSnapshot?.child(currentUser.uid)!!.child(currentUser.currentUser!!.displayName).child(worktime.dateWorktime)!!.getValue() != null
 //                    if (dataSnapshot!!.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).exists()) {
 //                mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
 //                    } else {
 //                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
 //                    }
-                mLogWorktimeRef.child(currentUser.uid)
-                        .child(currentUser.currentUser!!.displayName)
-                        .child(worktimeModel.yearWorktime)
-                        .child(worktimeModel.monthWorktime)
-                        .child(worktimeModel.dateWorktime)
+
+
+//                mLogWorktimeRef.child(currentUser.uid)
+//                        .child(currentUser.currentUser!!.displayName)
+//                        .child(worktimeModel.yearWorktime)
+//                        .child(worktimeModel.monthWorktime)
+
+
+//                val listWorktime = dataSnapshot
+//                        ?.child(currentUser.uid)
+//                        ?.child(currentUser.currentUser!!.displayName)
+//                        ?.child(worktimeModel.yearWorktime)
+//                        ?.child(worktimeModel.monthWorktime)
+//                        .getValue(Post.class)
+//                        //.child(worktimeModel.dateWorktime)
             }
         })
+    }
+
+    /**
+     * Update List worked time
+     */
+    fun updateUI(){
+        mOutputText?.setText("Test listing ")
+        mOutputText!!.setText(TextUtils.join("\n", listOfWorktime))
     }
 
     /**
@@ -149,4 +204,11 @@ class ListLoggedWorktime : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
     }
+}
+
+class Worktime2{
+    val beginWorktime: String? = null
+    val beginLunch: String? = null
+    val doneLunch: String? = null
+    val doneWorktime: String? = null
 }
