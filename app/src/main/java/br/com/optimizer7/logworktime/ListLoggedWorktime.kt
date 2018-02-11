@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.Menu
@@ -32,6 +34,10 @@ class ListLoggedWorktime : AppCompatActivity() {
      */
     val mRootRef = FirebaseDatabase.getInstance().getReference()
 
+    var mRecyclerView: RecyclerView? = null
+    var mAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = null
+    var mLayoutManager: RecyclerView.LayoutManager? = null
+
     var dateSelected: String? = null
     var monthSelected: String? = null
     var yearSelected: String? = null
@@ -52,6 +58,20 @@ class ListLoggedWorktime : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.list_logged_worktime_activity)
+        mRecyclerView = findViewById(R.id.recyclerView)
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView!!.setHasFixedSize(true)
+
+        // use a linear layout manager
+        mLayoutManager = LinearLayoutManager(this)
+        mRecyclerView!!.layoutManager = mLayoutManager
+
+        // specify an adapter (see also next example)
+//        mAdapter = ListLoggedWorktimeAdapter(myDataset)
+//        mRecyclerView!!.setAdapter(mAdapter);
+
 
         val myToolbar = findViewById<View>(R.id.toolbar_list_logged_worktime) as Toolbar
         setSupportActionBar(myToolbar)
