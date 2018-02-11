@@ -87,11 +87,29 @@ class ListLoggedWorktime : AppCompatActivity() {
                 calendarPick!!.visibility=View.GONE
             }
         })
+
+        calendarPick!!.setOnDateChangeListener { view, year, month, dayOfMonth ->
+
+            dateSelected = ""+year+"-"+(month+1)+"-"+dayOfMonth
+            getMonthFullName(Date(year, month, dayOfMonth))
+            yearSelected = year.toString()
+
+            mOutputText!!.text = " "
+            loadLoggedWorktime()
+        }
+    }
+
+    /**
+     * Get the month's full name
+     */
+    fun getMonthFullName(date: Date){
+        monthSelected = month_date.format(date)
     }
 
     val listOfWorktime: MutableList<Worktime> = mutableListOf()
 
     fun loadLoggedWorktime(){
+
         mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
 
             var worktimeModel = callbackLoggedTime()
@@ -102,11 +120,7 @@ class ListLoggedWorktime : AppCompatActivity() {
 
             override fun onDataChange(dataSnapshot: DataSnapshot?) {
 
-                val chu = dataSnapshot!!.children
-                chu.forEach{
-                    println("TESTEEEEEEEEEEEEEEEEEE")
-                   println(it.toString())
-                }
+                listOfWorktime.clear()
 
                 dataSnapshot!!
                         ?.child(currentUser.uid)
@@ -119,40 +133,18 @@ class ListLoggedWorktime : AppCompatActivity() {
                 }
 
                 updateUI()
-
-                //dataSnapshot?.child(currentUser.uid)!!.child(currentUser.currentUser!!.displayName).child(worktime.dateWorktime)!!.getValue() != null
-//                    if (dataSnapshot!!.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).exists()) {
-//                mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
-//                    } else {
-//                        mLogWorktimeRef.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).setValue(worktimeModel.worktime)
-//                    }
-
-
-//                mLogWorktimeRef.child(currentUser.uid)
-//                        .child(currentUser.currentUser!!.displayName)
-//                        .child(worktimeModel.yearWorktime)
-//                        .child(worktimeModel.monthWorktime)
-
-
-//                val listWorktime = dataSnapshot
-//                        ?.child(currentUser.uid)
-//                        ?.child(currentUser.currentUser!!.displayName)
-//                        ?.child(worktimeModel.yearWorktime)
-//                        ?.child(worktimeModel.monthWorktime)
-//                        .getValue(Post.class)
-//                        //.child(worktimeModel.dateWorktime)
             }
         })
     }
 
     @SuppressLint("SetTextI18n")
-            /**
+     /**
      * Update List worked time
      */
     fun updateUI(){
         val iterator = listOfWorktime.iterator()
 
-        var logTimeString: String = ""
+        var logTimeString = ""
 
         iterator.forEach {
 
@@ -215,11 +207,4 @@ class ListLoggedWorktime : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
     }
-}
-
-class Worktime2{
-    val beginWorktime: String? = null
-    val beginLunch: String? = null
-    val doneLunch: String? = null
-    val doneWorktime: String? = null
 }

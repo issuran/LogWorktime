@@ -16,7 +16,6 @@ import java.util.*
 class LoginActivity : AppCompatActivity(){
 
     private val RC_SIGN_IN = 2
-//    private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +24,6 @@ class LoginActivity : AppCompatActivity(){
         val auth = FirebaseAuth.getInstance()
         if (auth.currentUser != null) {
             // already signed in
-//            val user = FirebaseAuth.getInstance().currentUser
             val intent = Intent(this, LogTimeActivity::class.java)
             startActivity(intent)
             finish()
@@ -52,7 +50,6 @@ class LoginActivity : AppCompatActivity(){
 
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
-//                val user = FirebaseAuth.getInstance().currentUser
                 val intent = Intent(this, LogTimeActivity::class.java)
                 startActivity(intent)
                 finish()
