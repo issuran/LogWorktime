@@ -197,7 +197,7 @@ class LogTimeActivity : AppCompatActivity() {
         val stopLunch = stopLunch?.getText().toString()
         val stopWorktime = stopWorktime?.getText().toString()
 
-        return DateWorktime(yearSelected, monthSelected, dateSelected, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime))
+        return DateWorktime(yearSelected, monthSelected, dateSelected, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime, dateSelected))
     }
 
     /**

@@ -145,12 +145,23 @@ class ListLoggedWorktime : AppCompatActivity() {
         })
     }
 
-    /**
+    @SuppressLint("SetTextI18n")
+            /**
      * Update List worked time
      */
     fun updateUI(){
-        mOutputText?.setText("Test listing ")
-        mOutputText!!.setText(TextUtils.join("\n", listOfWorktime))
+        val iterator = listOfWorktime.iterator()
+
+        var logTimeString: String = ""
+
+        iterator.forEach {
+
+            logTimeString +=
+
+            "Date: " + it.date + "\n" + it.beginWorktime + "  |  " + it.beginLunch + "  |  " + it.doneLunch + "  |  " + it.doneWorktime + "\n\n"
+
+        }
+        mOutputText!!.setText( logTimeString )
     }
 
     /**
