@@ -32,9 +32,10 @@ Tiago Oliveira
 
 - Rewrite code to use MVC
 
-![_dsc6149](https://user-images.githubusercontent.com/8193383/36129627-491535d2-104f-11e8-9046-710a2f0aef63.JPG)
-![_dsc6150](https://user-images.githubusercontent.com/8193383/36129628-49392d02-104f-11e8-8d61-c47b7a26e7f5.JPG)
-![_dsc6151](https://user-images.githubusercontent.com/8193383/36129629-495ec274-104f-11e8-8d77-9d47c621aff2.JPG)
+![1](https://user-images.githubusercontent.com/8193383/36129692-98902f0e-104f-11e8-95f8-d0f2ec88700c.png)
+![2](https://user-images.githubusercontent.com/8193383/36129693-98af6ce8-104f-11e8-89d7-1c79d6d7e379.png)
+![3](https://user-images.githubusercontent.com/8193383/36129694-98d19d36-104f-11e8-86c2-a618a11e2b75.png)
+
 
 # Special Thanks
 https://developers.google.com/sheets/api/quickstart/android#step_6_run_the_app
