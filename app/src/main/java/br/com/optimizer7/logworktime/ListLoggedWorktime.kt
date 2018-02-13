@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ListLoggedWorktime : AppCompatActivity() {
     /**
@@ -34,8 +35,10 @@ class ListLoggedWorktime : AppCompatActivity() {
      */
     val mRootRef = FirebaseDatabase.getInstance().getReference()
 
+    val listOfWorktime: MutableList<Worktime> = mutableListOf()
+
     var mRecyclerView: RecyclerView? = null
-    var mAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? = null
+    var mAdapter: RecyclerView.Adapter<ListLoggedWorktimeAdapter.PlaceHolder>? = null
     var mLayoutManager: RecyclerView.LayoutManager? = null
 
     var dateSelected: String? = null
@@ -69,8 +72,8 @@ class ListLoggedWorktime : AppCompatActivity() {
         mRecyclerView!!.layoutManager = mLayoutManager
 
         // specify an adapter (see also next example)
-//        mAdapter = ListLoggedWorktimeAdapter(myDataset)
-//        mRecyclerView!!.setAdapter(mAdapter);
+        mAdapter = ListLoggedWorktimeAdapter(listOfWorktime as ArrayList<Worktime>)
+        mRecyclerView!!.setAdapter(mAdapter)
 
 
         val myToolbar = findViewById<View>(R.id.toolbar_list_logged_worktime) as Toolbar
@@ -82,17 +85,13 @@ class ListLoggedWorktime : AppCompatActivity() {
         currentUser = FirebaseAuth.getInstance()
 
         calendarPick = findViewById(R.id.listCalendarView)
-        calendarPick!!.visibility=View.GONE
+        //calendarPick!!.visibility=View.GONE
 
         dateSelected = SimpleDateFormat("yyyy-MM-dd").format(Date()).toString()
         monthSelected = month_date.format(cal.time)
         yearSelected = SimpleDateFormat("yyyy").format(Date()).toString()
 
         txtSelectedMonth = findViewById(R.id.txtSelectedMonth)
-
-        mOutputText = findViewById(R.id.temp)
-        mOutputText!!.isVerticalScrollBarEnabled = true
-
 
         handleClicks()
 
@@ -114,7 +113,6 @@ class ListLoggedWorktime : AppCompatActivity() {
             getMonthFullName(Date(year, month, dayOfMonth))
             yearSelected = year.toString()
 
-            mOutputText!!.text = " "
             loadLoggedWorktime()
         }
     }
@@ -124,9 +122,8 @@ class ListLoggedWorktime : AppCompatActivity() {
      */
     fun getMonthFullName(date: Date){
         monthSelected = month_date.format(date)
+        txtSelectedMonth!!.setText(monthSelected)
     }
-
-    val listOfWorktime: MutableList<Worktime> = mutableListOf()
 
     fun loadLoggedWorktime(){
 
@@ -141,6 +138,8 @@ class ListLoggedWorktime : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot?) {
 
                 listOfWorktime.clear()
+                mRecyclerView!!.invalidate()
+                mAdapter!!.notifyDataSetChanged()
 
                 dataSnapshot!!
                         ?.child(currentUser.uid)
@@ -152,7 +151,7 @@ class ListLoggedWorktime : AppCompatActivity() {
                     it.getValue<Worktime>(Worktime::class.java)
                 }
 
-                updateUI()
+                //updateUI()
             }
         })
     }
@@ -160,7 +159,7 @@ class ListLoggedWorktime : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
      /**
      * Update List worked time
-     */
+
     fun updateUI(){
         val iterator = listOfWorktime.iterator()
 
@@ -175,6 +174,7 @@ class ListLoggedWorktime : AppCompatActivity() {
         }
         mOutputText!!.setText( logTimeString )
     }
+      */
 
     /**
      * Retrieve object with input data from user
