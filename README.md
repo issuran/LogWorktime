@@ -11,19 +11,26 @@ Tiago Oliveira
 # Bugs
 - Report to me by tiago_fernandes89@hotmail.com
 
+# Done
+
+- Firebase Auth
+
+- Firebase Database
+
+- Log Worktime
+
+- Retrieve Worktime
+
+- Listing using RecyclerView
+
+- Material Design
+
 # Pendencies
-- Integrate to Google API;
+- Improve UI/UX
 
-- Write worktime;
+- Improve Layout
 
-- Read worktime;
+- Rewrite code to use MVC
 
-- Edit worktime;
-
-- Beautify;
-
-- Publish it
-
-...
 # Special Thanks
 https://developers.google.com/sheets/api/quickstart/android#step_6_run_the_app
