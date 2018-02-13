@@ -45,8 +45,6 @@ class ListLoggedWorktime : AppCompatActivity() {
     var monthSelected: String? = null
     var yearSelected: String? = null
 
-    var mOutputText: TextView? = null
-
     val mLogWorktimeRef = mRootRef.child("logworktimes")
 
     lateinit var currentUser: FirebaseAuth
