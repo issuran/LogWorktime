@@ -22,13 +22,8 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
-
-
-
-            <!--TESTE-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,14 +38,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/leftCalendarOption"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/previousMonth"
+                        android:layout_width="20dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/leftCalendarOption"
-                        android:textSize="24dp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"
+                        android:src="@mipmap/ic_left_calendar_option"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/txtSelectedMonth"
                         app:layout_constraintHorizontal_bias="0.5"
@@ -63,25 +55,22 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:fontFamily="sans-serif"
-                        android:text="February"
+                        android:text="@string/month_year_label"
                         android:textColor="@android:color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:typeface="normal"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/rightCalendarOption"
+                        app:layout_constraintEnd_toStartOf="@+id/nextMonth"
                         app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toEndOf="@+id/leftCalendarOption"
+                        app:layout_constraintStart_toEndOf="@+id/previousMonth"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/rightCalendarOption"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/nextMonth"
+                        android:layout_width="20dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/rightCalendarOption"
-                        android:textSize="24dp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"
+                        android:src="@mipmap/ic_right_calendar_option"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
@@ -91,8 +80,6 @@
                 </android.support.constraint.ConstraintLayout>
 
             </LinearLayout>
-            <!--TESTE-->
-
 
             <CalendarView
                 android:id="@+id/listCalendarView"
@@ -127,7 +114,7 @@
                         android:id="@+id/dateWorktime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Date"
+                        android:text="@string/worktime_date"
                         android:textStyle="bold"
                         android:textSize="14sp"
                         android:textColor="@android:color/black"
@@ -141,7 +128,7 @@
                         android:id="@+id/startWorktime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Start"
+                        android:text="@string/start_worktime_label"
                         android:textStyle="bold"
                         android:textSize="14sp"
                         android:textColor="@android:color/black"
@@ -155,7 +142,7 @@
                         android:id="@+id/startLunch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Lunch"
+                        android:text="@string/lunch_worktime_label"
                         android:textStyle="bold"
                         android:textSize="14sp"
                         android:textColor="@android:color/black"
@@ -169,7 +156,7 @@
                         android:id="@+id/doneLunch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Lunch Af"
+                        android:text="@string/lunch_end_worktime_label"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"
@@ -183,7 +170,7 @@
                         android:id="@+id/doneWorktime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Finish"
+                        android:text="@string/finish_worktime_label"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"

@@ -1,19 +1,17 @@
 package br.com.optimizer7.logworktime
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import android.widget.CalendarView
+import android.widget.ImageView
 import android.widget.TextView
 import br.com.optimizer7.logworktime.Model.DateWorktime
 import br.com.optimizer7.logworktime.Model.Worktime
@@ -41,19 +39,26 @@ class ListLoggedWorktime : AppCompatActivity() {
     var mAdapter: RecyclerView.Adapter<ListLoggedWorktimeAdapter.PlaceHolder>? = null
     var mLayoutManager: RecyclerView.LayoutManager? = null
 
-    var dateSelected: String? = null
-    var monthSelected: String? = null
-    var yearSelected: String? = null
+    var dateSelectedText: String? = null
+    var monthSelectedText: String? = null
+    var yearSelectedText: String? = null
+
+    var dateSelected: Date? = null
+    var daySelected = 0
+    var monthSelected = 0
+    var yearSelected = 2018
 
     val mLogWorktimeRef = mRootRef.child("logworktimes")
 
     lateinit var currentUser: FirebaseAuth
 
-    val cal = Calendar.getInstance()
+    var cal = Calendar.getInstance()
     val month_date = SimpleDateFormat("MMMM")
 
     var txtSelectedMonth: TextView? = null
     var calendarPick: CalendarView? = null
+    var previousMonth: ImageView? = null
+    var nextMonth: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,16 +87,38 @@ class ListLoggedWorktime : AppCompatActivity() {
         // Check if user is signed in (non-null) and update UI accordingly.
         currentUser = FirebaseAuth.getInstance()
 
-        calendarPick = findViewById(R.id.listCalendarView)
-        calendarPick!!.visibility=View.GONE
+        bindViews()
 
-        dateSelected = SimpleDateFormat("yyyy-MM-dd").format(Date()).toString()
-        monthSelected = month_date.format(cal.time)
-        yearSelected = SimpleDateFormat("yyyy").format(Date()).toString()
-
-        txtSelectedMonth = findViewById(R.id.txtSelectedMonth)
+        setCalendarValues(Date())
 
         handleClicks()
+
+        loadLoggedWorktime()
+    }
+
+    fun bindViews(){
+
+        calendarPick = findViewById(R.id.listCalendarView)
+        calendarPick!!.visibility=View.GONE
+        previousMonth = findViewById(R.id.previousMonth)
+        nextMonth = findViewById(R.id.nextMonth)
+        txtSelectedMonth = findViewById(R.id.txtSelectedMonth)
+
+    }
+
+    fun setCalendarValues(date: Date){
+        cal!!.time = date
+
+        dateSelectedText = SimpleDateFormat("yyyy-MM-dd").format(date).toString()
+        monthSelectedText = month_date.format(cal.time)
+        yearSelectedText = SimpleDateFormat("yyyy").format(date).toString()
+
+        monthSelected = cal.get(Calendar.MONTH)
+        yearSelected = cal.get(Calendar.YEAR)
+        daySelected = cal.get(Calendar.DAY_OF_MONTH)
+        dateSelected = date
+
+        setMonthYearFullName()
 
         loadLoggedWorktime()
     }
@@ -107,9 +134,9 @@ class ListLoggedWorktime : AppCompatActivity() {
 
         calendarPick!!.setOnDateChangeListener { view, year, month, dayOfMonth ->
 
-            dateSelected = ""+year+"-"+(month+1)+"-"+dayOfMonth
-            getMonthFullName(Date(year, month, dayOfMonth))
-            yearSelected = year.toString()
+            dateSelectedText = ""+year+"-"+(month+1)+"-"+dayOfMonth
+            //setMonthYearFullName(Date(year, month, dayOfMonth))
+            yearSelectedText = year.toString()
 
             if(calendarPick!!.visibility==View.GONE){
                 calendarPick!!.visibility=View.VISIBLE
@@ -119,14 +146,23 @@ class ListLoggedWorktime : AppCompatActivity() {
 
             loadLoggedWorktime()
         }
+
+        previousMonth!!.setOnClickListener(View.OnClickListener {
+            dateSelected!!.month -= 1
+            setCalendarValues(dateSelected!!)
+        })
+
+        nextMonth!!.setOnClickListener(View.OnClickListener {
+            dateSelected!!.month += 1
+            setCalendarValues(dateSelected!!)
+        })
     }
 
     /**
-     * Get the month's full name
+     * Set text view with month and year values
      */
-    fun getMonthFullName(date: Date){
-        monthSelected = month_date.format(date)
-        txtSelectedMonth!!.setText(monthSelected)
+    fun setMonthYearFullName(){
+        txtSelectedMonth!!.setText(monthSelectedText + " " + yearSelectedText)
     }
 
     fun loadLoggedWorktime(){
@@ -160,31 +196,11 @@ class ListLoggedWorktime : AppCompatActivity() {
         })
     }
 
-    @SuppressLint("SetTextI18n")
-     /**
-     * Update List worked time
-
-    fun updateUI(){
-        val iterator = listOfWorktime.iterator()
-
-        var logTimeString = ""
-
-        iterator.forEach {
-
-            logTimeString +=
-
-            "Date: " + it.date + "\n" + it.beginWorktime + "  |  " + it.beginLunch + "  |  " + it.doneLunch + "  |  " + it.doneWorktime + "\n\n"
-
-        }
-        mOutputText!!.setText( logTimeString )
-    }
-      */
-
     /**
      * Retrieve object with input data from user
      */
     fun callbackLoggedTime() : DateWorktime {
-        return DateWorktime(yearSelected, monthSelected, dateSelected)
+        return DateWorktime(yearSelectedText, monthSelectedText, dateSelectedText)
     }
 
     /**
