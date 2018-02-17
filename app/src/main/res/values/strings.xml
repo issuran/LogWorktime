@@ -14,4 +14,6 @@
     <string name="list_logged_worktime">List Logged Worktime</string>
     <string name="logout">Logout</string>
     <string name="log_worktime">Log Worktime</string>
+    <string name="leftCalendarOption"><![CDATA[<]]></string>
+    <string name="rightCalendarOption"><![CDATA[>]]></string>
 </resources>

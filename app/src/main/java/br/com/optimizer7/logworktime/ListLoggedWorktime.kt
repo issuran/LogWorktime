@@ -83,7 +83,7 @@ class ListLoggedWorktime : AppCompatActivity() {
         currentUser = FirebaseAuth.getInstance()
 
         calendarPick = findViewById(R.id.listCalendarView)
-        //calendarPick!!.visibility=View.GONE
+        calendarPick!!.visibility=View.GONE
 
         dateSelected = SimpleDateFormat("yyyy-MM-dd").format(Date()).toString()
         monthSelected = month_date.format(cal.time)
@@ -110,6 +110,12 @@ class ListLoggedWorktime : AppCompatActivity() {
             dateSelected = ""+year+"-"+(month+1)+"-"+dayOfMonth
             getMonthFullName(Date(year, month, dayOfMonth))
             yearSelected = year.toString()
+
+            if(calendarPick!!.visibility==View.GONE){
+                calendarPick!!.visibility=View.VISIBLE
+            }else{
+                calendarPick!!.visibility=View.GONE
+            }
 
             loadLoggedWorktime()
         }
