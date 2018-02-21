@@ -6,4 +6,5 @@ data class Worktime constructor( val beginWorktime: String? = null,
                                  val beginLunch: String? = null,
                                  val doneLunch: String? = null,
                                  val doneWorktime: String? = null,
-                                 val date: String? = null)
+                                 val date: String? = null,
+                                 val id: Int? = null)

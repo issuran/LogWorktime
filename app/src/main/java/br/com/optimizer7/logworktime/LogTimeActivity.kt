@@ -41,9 +41,10 @@ class LogTimeActivity : AppCompatActivity() {
      */
     val mRootRef = FirebaseDatabase.getInstance().getReference()
 
-    var dateSelected: String? = null
-    var monthSelected: String? = null
-    var yearSelected: String? = null
+    var dateSelectedText: String? = null
+    var monthSelectedText: String? = null
+    var yearSelectedText: String? = null
+    var daySelected: Int = 0
 
     val mLogWorktimeRef = mRootRef.child("logworktimes")
 
@@ -81,11 +82,6 @@ class LogTimeActivity : AppCompatActivity() {
         logWorktime = findViewById(R.id.btLogWorktime)
         calendarPick = findViewById(R.id.calendarView)
 
-        dateSelected = SimpleDateFormat("yyyy-MM-dd").format(Date()).toString()
-
-        monthSelected = month_date.format(cal.time)
-        yearSelected = SimpleDateFormat("yyyy").format(Date()).toString()
-
         handleSelectWorktime()
 
         logWorktime()
@@ -102,7 +98,7 @@ class LogTimeActivity : AppCompatActivity() {
      * Get the month's full name
      */
     fun getMonthFullName(date: Date){
-        monthSelected = month_date.format(date)
+        monthSelectedText = month_date.format(date)
     }
 
     /**
@@ -113,9 +109,10 @@ class LogTimeActivity : AppCompatActivity() {
 
         calendarPick!!.setOnDateChangeListener { view, year, month, dayOfMonth ->
 
-            dateSelected = ""+year+"-"+(month+1)+"-"+dayOfMonth
+            dateSelectedText = ""+year+"-"+(month+1)+"-"+dayOfMonth
             getMonthFullName(Date(year, month, dayOfMonth))
-            yearSelected = year.toString()
+            yearSelectedText = year.toString()
+            daySelected = dayOfMonth
 
             beginWorktime?.setText("")
             beginLunch?.setText("")
@@ -197,7 +194,7 @@ class LogTimeActivity : AppCompatActivity() {
         val stopLunch = stopLunch?.getText().toString()
         val stopWorktime = stopWorktime?.getText().toString()
 
-        return DateWorktime(yearSelected, monthSelected, dateSelected, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime, dateSelected))
+        return DateWorktime(yearSelectedText, monthSelectedText, dateSelectedText, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime, dateSelectedText, daySelected))
     }
 
     /**

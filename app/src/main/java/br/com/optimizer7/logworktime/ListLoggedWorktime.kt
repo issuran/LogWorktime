@@ -112,10 +112,6 @@ class ListLoggedWorktime : AppCompatActivity() {
         dateSelectedText = SimpleDateFormat("yyyy-MM-dd").format(date).toString()
         monthSelectedText = month_date.format(cal.time)
         yearSelectedText = SimpleDateFormat("yyyy").format(date).toString()
-
-        monthSelected = cal.get(Calendar.MONTH)
-        yearSelected = cal.get(Calendar.YEAR)
-        daySelected = cal.get(Calendar.DAY_OF_MONTH)
         dateSelected = date
 
         setMonthYearFullName()
@@ -133,10 +129,15 @@ class ListLoggedWorktime : AppCompatActivity() {
         })
 
         calendarPick!!.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            val date = Date(year,month,dayOfMonth)
 
+            cal!!.time = date
+            dateSelected = date
             dateSelectedText = ""+year+"-"+(month+1)+"-"+dayOfMonth
-            //setMonthYearFullName(Date(year, month, dayOfMonth))
+            monthSelectedText = month_date.format(cal.time)
             yearSelectedText = year.toString()
+            setMonthYearFullName()
+
 
             if(calendarPick!!.visibility==View.GONE){
                 calendarPick!!.visibility=View.VISIBLE
@@ -190,6 +191,8 @@ class ListLoggedWorktime : AppCompatActivity() {
                         ?.mapNotNullTo(listOfWorktime){
                     it.getValue<Worktime>(Worktime::class.java)
                 }
+
+                listOfWorktime.sortWith(compareBy(Worktime::id))
 
                 //updateUI()
             }
