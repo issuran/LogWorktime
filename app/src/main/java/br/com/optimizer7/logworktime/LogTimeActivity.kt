@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -17,14 +18,9 @@ import android.widget.EditText
 import br.com.optimizer7.logworktime.Model.DateWorktime
 import br.com.optimizer7.logworktime.Model.Worktime
 import com.firebase.ui.auth.AuthUI
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.log_time_activity.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,26 +35,24 @@ class LogTimeActivity : AppCompatActivity() {
     /**
      * Variables
      */
-    val mRootRef = FirebaseDatabase.getInstance().getReference()
-
-    var dateSelectedText: String? = null
-    var monthSelectedText: String? = null
-    var yearSelectedText: String? = null
-    var daySelected: Int = 0
-
-    val mLogWorktimeRef = mRootRef.child("logworktimes")
-
-    lateinit var currentUser: FirebaseAuth
-
-    var beginWorktime: EditText? = null
-    var beginLunch: EditText? = null
-    var stopLunch: EditText? = null
-    var stopWorktime: EditText? = null
-    var logWorktime: Button? = null
-    var calendarPick: CalendarView? = null
-
-    val cal = Calendar.getInstance()
-    val month_date = SimpleDateFormat("MMMM")
+    private val mRootRef: DatabaseReference = FirebaseDatabase.getInstance().getReference()
+    private var dateSelectedText: String? = null
+    private var monthSelectedText: String? = null
+    private var yearSelectedText: String? = null
+    private var daySelected: Int = 0
+    private val mLogWorktimeRef = mRootRef.child("logworktimes")
+    private var currentUser: FirebaseAuth? = null
+    private var beginWorktime: EditText? = null
+    private var beginLunch: EditText? = null
+    private var stopLunch: EditText? = null
+    private var stopWorktime: EditText? = null
+    private var logWorktime: Button? = null
+    private var calendarPick: CalendarView? = null
+    private val cal: Calendar
+        get() = Calendar.getInstance()
+    private val monthSimpleDateFormat = SimpleDateFormat("MMMM", Locale.US)
+    private var hour = 0
+    private var minute = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +66,7 @@ class LogTimeActivity : AppCompatActivity() {
         // Check if user is signed in (non-null) and update UI accordingly.
         currentUser = FirebaseAuth.getInstance()
         if (currentUser != null) {
-            updateUserNameLogged(currentUser.currentUser!!)
+            updateUserNameLogged(currentUser!!.currentUser!!)
         }
 
         beginWorktime = findViewById(R.id.edtBeginWorktime)
@@ -90,29 +84,61 @@ class LogTimeActivity : AppCompatActivity() {
     /**
      * Set User name logged
      */
-    fun updateUserNameLogged(user: FirebaseUser){
-        txtUserName.text = "Bom dia : ${user.displayName}"
+    private fun updateUserNameLogged(user: FirebaseUser){
+        txtUserName.text = getString(R.string.message_welcome_user_name, user.displayName)
+    }
+
+    private fun updateDateWorktimeToLog(){
+        updateDayValue()
+        updateMonthValue()
+        updateYearValue()
+        updateDateSelectedTextValue()
+    }
+
+    /**
+     * Get the day's value
+     */
+    private fun updateDayValue(){
+        daySelected = cal.get(Calendar.DAY_OF_MONTH)
     }
 
     /**
      * Get the month's full name
      */
-    fun getMonthFullName(date: Date){
-        monthSelectedText = month_date.format(date)
+    private fun updateMonthValue(){
+        monthSelectedText = monthSimpleDateFormat.format(cal.time)
+    }
+
+    /**
+     * Get the year's value
+     */
+    private fun updateYearValue(){
+        yearSelectedText = cal.get(Calendar.YEAR).toString()
+    }
+
+    /**
+     * Get date selected in format
+     */
+    private fun updateDateSelectedTextValue(){
+        dateSelectedText =
+                ""+cal.get(Calendar.DAY_OF_MONTH)+
+                "-"+cal.get(Calendar.MONTH + 1)+
+                "-"+cal.get(Calendar.YEAR)
     }
 
     /**
      * Handle select time and select calendar day
      */
     @SuppressLint("ClickableViewAccessibility")
-    fun handleSelectWorktime(){
+    private fun handleSelectWorktime(){
 
-        calendarPick!!.setOnDateChangeListener { view, year, month, dayOfMonth ->
+        hour = cal.get(Calendar.HOUR_OF_DAY)
+        minute = cal.get(Calendar.MINUTE)
 
-            dateSelectedText = ""+year+"-"+(month+1)+"-"+dayOfMonth
-            getMonthFullName(Date(year, month, dayOfMonth))
-            yearSelectedText = year.toString()
-            daySelected = dayOfMonth
+        calendarPick!!.setOnDateChangeListener { _, year, month, dayOfMonth ->
+
+            cal.set(year, month, dayOfMonth)
+            updateDateWorktimeToLog()
 
             beginWorktime?.setText("")
             beginLunch?.setText("")
@@ -120,51 +146,51 @@ class LogTimeActivity : AppCompatActivity() {
             stopWorktime?.setText("")
         }
 
-        beginWorktime?.setOnTouchListener({ v, event ->
-            if( event.getAction() == MotionEvent.ACTION_UP){
-                TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
-                    beginWorktime?.setText("" + hourOfDay + ":" + minute)
-                }, 10, 10, true).show()
+        beginWorktime?.setOnTouchListener({ _, event ->
+            if( event.action == MotionEvent.ACTION_UP){
+                TimePickerDialog(this, OnTimeSetListener { _, hourOfDay, minute ->
+                    beginWorktime?.setText(getString(R.string.start_worktime_displayed_label, hourOfDay, minute))
+                }, hour, minute, true).show()
             }
             true
         })
 
-        beginLunch?.setOnTouchListener({ v, event ->
-            if( event.getAction() == MotionEvent.ACTION_UP){
-                TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
-                    beginLunch?.setText("" + hourOfDay + ":" + minute)
-                }, 10, 10, true).show()
+        beginLunch?.setOnTouchListener({ _, event ->
+            if( event.action == MotionEvent.ACTION_UP){
+                TimePickerDialog(this, OnTimeSetListener { _, hourOfDay, minute ->
+                    beginLunch?.setText(getString(R.string.start_lunch_displayed_label, hourOfDay, minute))
+                }, hour, minute, true).show()
             }
             true
         })
 
-        stopLunch?.setOnTouchListener({ v, event ->
-            if( event.getAction() == MotionEvent.ACTION_UP){
-                TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
-                    stopLunch?.setText("" + hourOfDay + ":" + minute)
-                }, 10, 10, true).show()
+        stopLunch?.setOnTouchListener({ _, event ->
+            if( event.action == MotionEvent.ACTION_UP){
+                TimePickerDialog(this, OnTimeSetListener { _, hourOfDay, minute ->
+                    stopLunch?.setText(getString(R.string.done_lunch_displayed_label, hourOfDay, minute))
+                }, hour, minute, true).show()
             }
             true
         })
 
-        stopWorktime?.setOnTouchListener({ v, event ->
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                TimePickerDialog(this, OnTimeSetListener { view, hourOfDay, minute ->
-                    stopWorktime?.setText("" + hourOfDay + ":" + minute)
-                }, 10, 10, true).show()
+        stopWorktime?.setOnTouchListener({ _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                TimePickerDialog(this, OnTimeSetListener { _, hourOfDay, minute ->
+                    stopWorktime?.setText(getString(R.string.done_worktime_displayed_label, hourOfDay, minute))
+                }, hour, minute, true).show()
             }
             true
         })
+
     }
 
     /**
      * Persist data on Firebase Database
      */
-    fun logWorktime(){
-        logWorktime?.setOnClickListener(View.OnClickListener {
-            println("Log Worktime")
+    private fun logWorktime(){
+        logWorktime?.setOnClickListener({
 
-            var worktimeModel = retrieveLoggedTime()
+            val worktimeModel = retrieveLoggedTime()
 
             mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError?) {
@@ -172,14 +198,14 @@ class LogTimeActivity : AppCompatActivity() {
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                    //dataSnapshot?.child(currentUser.uid)!!.child(currentUser.currentUser!!.displayName).child(worktime.dateWorktime)!!.getValue() != null
-//                    if (dataSnapshot!!.child(currentUser.uid).child(currentUser.currentUser!!.displayName).child(worktimeModel.dateWorktime).exists()) {
-                        mLogWorktimeRef.child(currentUser.uid)
-                                .child(currentUser.currentUser!!.displayName)
+                        mLogWorktimeRef.child(currentUser!!.uid)
+                                .child(currentUser!!.currentUser!!.displayName)
                                 .child(worktimeModel.yearWorktime)
                                 .child(worktimeModel.monthWorktime)
                                 .child(worktimeModel.dateWorktime)
                                 .setValue(worktimeModel.worktime)
+
+                    Snackbar.make(it,getString(R.string.success_log_worktime_message), Snackbar.LENGTH_SHORT).show()
                 }
             })
         })
@@ -188,13 +214,19 @@ class LogTimeActivity : AppCompatActivity() {
     /**
      * Retrieve object with input data from user
      */
-    fun retrieveLoggedTime() : DateWorktime {
-        val beginWorktime = beginWorktime?.getText().toString()
-        val beginLunch = beginLunch?.getText().toString()
-        val stopLunch = stopLunch?.getText().toString()
-        val stopWorktime = stopWorktime?.getText().toString()
+    private fun retrieveLoggedTime() : DateWorktime {
+        val beginWorktime = beginWorktime?.text.toString()
+        val beginLunch = beginLunch?.text.toString()
+        val stopLunch = stopLunch?.text.toString()
+        val stopWorktime = stopWorktime?.text.toString()
 
-        return DateWorktime(yearSelectedText, monthSelectedText, dateSelectedText, Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime, dateSelectedText, daySelected))
+        updateDateWorktimeToLog()
+
+        return DateWorktime(
+                yearSelectedText,
+                monthSelectedText,
+                dateSelectedText,
+                Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime, dateSelectedText, daySelected))
     }
 
     /**
@@ -212,12 +244,10 @@ class LogTimeActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
             R.id.action_settings -> {
-                println("Logout")
                 logout()
             }
 
             R.id.action_list_logged_worktime ->{
-                println("List of Logged Worktime")
                 val intent = Intent(this, ListLoggedWorktime::class.java)
                 startActivity(intent)
             }
@@ -230,12 +260,12 @@ class LogTimeActivity : AppCompatActivity() {
      */
     fun logout(){
         AuthUI.getInstance()
-                .signOut(this!!)
-                .addOnCompleteListener(OnCompleteListener {
-                    task: Task<Void> -> println("I am out")
+                .signOut(this)
+                .addOnCompleteListener({
+                    println("I am out")
                 })
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
-        this!!.finish()
+        this.finish()
     }
 }

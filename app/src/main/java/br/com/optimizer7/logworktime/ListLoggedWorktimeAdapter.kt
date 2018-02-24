@@ -17,14 +17,25 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListLoggedWorktimeAdapter.PlaceHolder{
-        val inflater = LayoutInflater.from(parent.context)
-        val inflatedView = inflater.inflate(R.layout.logged_worktime_cell, parent, false)
-        return PlaceHolder(inflatedView)
+//        if(viewType == 1){
+//            val inflater = LayoutInflater.from(parent.context)
+//            val inflatedView = inflater.inflate(R.layout.logged_worktime_label_cell, parent, false)
+//            return PlaceHolder(inflatedView, viewType)
+//        }else{
+            val inflater = LayoutInflater.from(parent.context)
+            val inflatedView = inflater.inflate(R.layout.logged_worktime_cell, parent, false)
+            return PlaceHolder(inflatedView)
+//        }
     }
 
     override fun getItemCount(): Int {
         return loggedWorktimes.size
     }
+
+//    override fun getItemViewType(position: Int): Int {
+//        if(position == 0) return 1
+//        else return 2
+//    }
 
 
 
@@ -42,12 +53,19 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
         }
 
         fun bindWorktime(worktime: Worktime){
-            this.worktime = worktime
-            view.startWorktime.setText(IsEmptyOrNull(worktime.beginWorktime))
-            view.startLunch.setText(IsEmptyOrNull(worktime.beginLunch))
-            view.doneLunch.setText(IsEmptyOrNull(worktime.doneLunch))
-            view.doneWorktime.setText(IsEmptyOrNull(worktime.doneWorktime))
-            view.dateWorktime.setText(worktime.date)
+//                view.startWorktime.text = view.context.getString(R.string.start_worktime_label)
+//                view.startLunch.text = view.context.getString(R.string.lunch_worktime_label)
+//                view.doneLunch.text = view.context.getString(R.string.lunch_end_worktime_label)
+//                view.doneWorktime.text = view.context.getString(R.string.finish_worktime_label)
+//                view.dateWorktime.text = view.context.getString(R.string.worktime_date)
+//            }else{
+                this.worktime = worktime
+                view.startWorktime.setText(IsEmptyOrNull(worktime.beginWorktime))
+                view.startLunch.setText(IsEmptyOrNull(worktime.beginLunch))
+                view.doneLunch.setText(IsEmptyOrNull(worktime.doneLunch))
+                view.doneWorktime.setText(IsEmptyOrNull(worktime.doneWorktime))
+                view.dateWorktime.setText(worktime.date)
+//            }
         }
 
         fun IsEmptyOrNull(data: String?) : String{

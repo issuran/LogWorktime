@@ -1,6 +1,6 @@
 package br.com.optimizer7.logworktime
 
-import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -13,16 +13,10 @@ import android.view.View
 import android.widget.CalendarView
 import android.widget.ImageView
 import android.widget.TextView
-import br.com.optimizer7.logworktime.Model.DateWorktime
 import br.com.optimizer7.logworktime.Model.Worktime
 import com.firebase.ui.auth.AuthUI
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -31,34 +25,25 @@ class ListLoggedWorktime : AppCompatActivity() {
     /**
      * Variables
      */
-    val mRootRef = FirebaseDatabase.getInstance().getReference()
-
-    val listOfWorktime: MutableList<Worktime> = mutableListOf()
-
-    var mRecyclerView: RecyclerView? = null
-    var mAdapter: RecyclerView.Adapter<ListLoggedWorktimeAdapter.PlaceHolder>? = null
-    var mLayoutManager: RecyclerView.LayoutManager? = null
-
-    var dateSelectedText: String? = null
-    var monthSelectedText: String? = null
-    var yearSelectedText: String? = null
-
-    var dateSelected: Date? = null
-    var daySelected = 0
-    var monthSelected = 0
-    var yearSelected = 2018
-
-    val mLogWorktimeRef = mRootRef.child("logworktimes")
-
-    lateinit var currentUser: FirebaseAuth
-
-    var cal = Calendar.getInstance()
-    val month_date = SimpleDateFormat("MMMM")
-
-    var txtSelectedMonth: TextView? = null
-    var calendarPick: CalendarView? = null
-    var previousMonth: ImageView? = null
-    var nextMonth: ImageView? = null
+    private val mRootRef: DatabaseReference = FirebaseDatabase.getInstance().getReference()
+    private val listOfWorktime: MutableList<Worktime> = mutableListOf()
+    private var mRecyclerView: RecyclerView? = null
+    private var mAdapter: RecyclerView.Adapter<ListLoggedWorktimeAdapter.PlaceHolder>? = null
+    private var mLayoutManager: RecyclerView.LayoutManager? = null
+    private var dateSelectedText: String? = null
+    private var monthSelectedText: String? = null
+    private var yearSelectedText: String? = null
+    private var daySelected = 0
+    private var monthSelected = 0
+    private var yearSelected = 0
+    private val mLogWorktimeRef = mRootRef.child("logworktimes")
+    private lateinit var currentUser: FirebaseAuth
+    private var cal = Calendar.getInstance()
+    private val monthSimpleDateFormat = SimpleDateFormat("MMMM", Locale.US)
+    private var txtSelectedMonth: TextView? = null
+    private var calendarPick: CalendarView? = null
+    private var previousMonth: ImageView? = null
+    private var nextMonth: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,8 +61,7 @@ class ListLoggedWorktime : AppCompatActivity() {
 
         // specify an adapter (see also next example)
         mAdapter = ListLoggedWorktimeAdapter(listOfWorktime as ArrayList<Worktime>)
-        mRecyclerView!!.setAdapter(mAdapter)
-
+        mRecyclerView!!.adapter = mAdapter
 
         val myToolbar = findViewById<View>(R.id.toolbar_list_logged_worktime) as Toolbar
         setSupportActionBar(myToolbar)
@@ -89,14 +73,14 @@ class ListLoggedWorktime : AppCompatActivity() {
 
         bindViews()
 
-        setCalendarValues(Date())
+        updateDateWorktimeToLog()
 
         handleClicks()
 
         loadLoggedWorktime()
     }
 
-    fun bindViews(){
+    private fun bindViews(){
 
         calendarPick = findViewById(R.id.listCalendarView)
         calendarPick!!.visibility=View.GONE
@@ -106,71 +90,84 @@ class ListLoggedWorktime : AppCompatActivity() {
 
     }
 
-    fun setCalendarValues(date: Date){
-        cal!!.time = date
-
-        dateSelectedText = SimpleDateFormat("yyyy-MM-dd").format(date).toString()
-        monthSelectedText = month_date.format(cal.time)
-        yearSelectedText = SimpleDateFormat("yyyy").format(date).toString()
-        dateSelected = date
-
-        setMonthYearFullName()
-
+    private fun updateDateWorktimeToLog(){
+        updateDayValue()
+        updateMonthValue()
+        updateYearValue()
+        updateDateSelectedTextValue()
+        updateMonthYearLabel()
         loadLoggedWorktime()
-    }
-
-    fun handleClicks() {
-        txtSelectedMonth?.setOnClickListener(View.OnClickListener {
-            if(calendarPick!!.visibility==View.GONE){
-                calendarPick!!.visibility=View.VISIBLE
-            }else{
-                calendarPick!!.visibility=View.GONE
-            }
-        })
-
-        calendarPick!!.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            val date = Date(year,month,dayOfMonth)
-
-            cal!!.time = date
-            dateSelected = date
-            dateSelectedText = ""+year+"-"+(month+1)+"-"+dayOfMonth
-            monthSelectedText = month_date.format(cal.time)
-            yearSelectedText = year.toString()
-            setMonthYearFullName()
-
-
-            if(calendarPick!!.visibility==View.GONE){
-                calendarPick!!.visibility=View.VISIBLE
-            }else{
-                calendarPick!!.visibility=View.GONE
-            }
-
-            loadLoggedWorktime()
-        }
-
-        previousMonth!!.setOnClickListener(View.OnClickListener {
-            dateSelected!!.month -= 1
-            setCalendarValues(dateSelected!!)
-        })
-
-        nextMonth!!.setOnClickListener(View.OnClickListener {
-            dateSelected!!.month += 1
-            setCalendarValues(dateSelected!!)
-        })
     }
 
     /**
      * Set text view with month and year values
      */
-    fun setMonthYearFullName(){
-        txtSelectedMonth!!.setText(monthSelectedText + " " + yearSelectedText)
+    private fun updateMonthYearLabel(){
+        txtSelectedMonth!!.text = getString(R.string.month_year_label, monthSelectedText, yearSelectedText)
     }
 
-    fun loadLoggedWorktime(){
+    /**
+     * Get the day's value
+     */
+    private fun updateDayValue(){
+        daySelected = cal.get(Calendar.DAY_OF_MONTH)
+    }
+
+    /**
+     * Get the month's full name
+     */
+    private fun updateMonthValue(){
+        monthSelectedText = monthSimpleDateFormat.format(cal.time)
+        monthSelected = cal.get(Calendar.MONTH)
+    }
+
+    /**
+     * Get the year's value
+     */
+    private fun updateYearValue(){
+        yearSelectedText = cal.get(Calendar.YEAR).toString()
+        yearSelected = cal.get(Calendar.YEAR)
+    }
+
+    /**
+     * Get date selected in format
+     */
+    private fun updateDateSelectedTextValue(){
+        dateSelectedText =
+                ""+cal.get(Calendar.DAY_OF_MONTH)+
+                "-"+cal.get(Calendar.MONTH + 1)+
+                "-"+cal.get(Calendar.YEAR)
+    }
+
+    private fun handleClicks() {
+
+        txtSelectedMonth?.setOnClickListener({
+            DatePickerDialog(this, DatePickerDialog.OnDateSetListener { it, year, month, dayOfMonth ->
+                cal.set(year, month, dayOfMonth)
+
+                updateDateWorktimeToLog()
+
+                updateMonthYearLabel()
+
+                loadLoggedWorktime()
+            }, yearSelected, monthSelected, daySelected) .show()
+
+        })
+
+        previousMonth!!.setOnClickListener({
+            cal.add(Calendar.MONTH, -1)
+            updateDateWorktimeToLog()
+        })
+
+        nextMonth!!.setOnClickListener({
+            cal.add(Calendar.MONTH, 1)
+            updateDateWorktimeToLog()
+        })
+    }
+
+    private fun loadLoggedWorktime(){
 
         mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
-
-            var worktimeModel = callbackLoggedTime()
 
             override fun onCancelled(p0: DatabaseError?) {
 
@@ -182,11 +179,11 @@ class ListLoggedWorktime : AppCompatActivity() {
                 mRecyclerView!!.invalidate()
                 mAdapter!!.notifyDataSetChanged()
 
-                dataSnapshot!!
+                dataSnapshot
                         ?.child(currentUser.uid)
                         ?.child(currentUser.currentUser!!.displayName)
-                        ?.child(worktimeModel.yearWorktime)
-                        ?.child(worktimeModel.monthWorktime)
+                        ?.child(yearSelectedText)
+                        ?.child(monthSelectedText)
                         ?.children
                         ?.mapNotNullTo(listOfWorktime){
                     it.getValue<Worktime>(Worktime::class.java)
@@ -194,16 +191,8 @@ class ListLoggedWorktime : AppCompatActivity() {
 
                 listOfWorktime.sortWith(compareBy(Worktime::id))
 
-                //updateUI()
             }
         })
-    }
-
-    /**
-     * Retrieve object with input data from user
-     */
-    fun callbackLoggedTime() : DateWorktime {
-        return DateWorktime(yearSelectedText, monthSelectedText, dateSelectedText)
     }
 
     /**
@@ -221,12 +210,10 @@ class ListLoggedWorktime : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
             R.id.action_settings -> {
-                println("Logout")
                 logout()
             }
 
             R.id.action_log_worktime ->{
-                println("Log Worktime")
                 finish()
             }
         }
@@ -238,16 +225,12 @@ class ListLoggedWorktime : AppCompatActivity() {
      */
     fun logout(){
         AuthUI.getInstance()
-                .signOut(this!!)
-                .addOnCompleteListener(OnCompleteListener {
-                    task: Task<Void> -> println("I am out")
+                .signOut(this)
+                .addOnCompleteListener({
+                    println("I am out")
                 })
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
-        this!!.finish()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
+        this.finish()
     }
 }
