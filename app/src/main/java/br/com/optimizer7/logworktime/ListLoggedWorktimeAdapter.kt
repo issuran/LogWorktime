@@ -12,37 +12,34 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
     val mDataSet: MutableList<Worktime> = mutableListOf()
 
     override fun onBindViewHolder(holder: ListLoggedWorktimeAdapter.PlaceHolder, position: Int) {
-        val itemWorktime = loggedWorktimes[position]
-        holder.bindWorktime(itemWorktime)
+        if(position == 0){
+            val itemWorktime = null
+            holder.bindWorktime(itemWorktime, position - 1)
+        }else{
+            if(itemCount >= 1){
+                val itemWorktime = loggedWorktimes[position - 1]
+                holder.bindWorktime(itemWorktime, position - 1)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListLoggedWorktimeAdapter.PlaceHolder{
-//        if(viewType == 1){
-//            val inflater = LayoutInflater.from(parent.context)
-//            val inflatedView = inflater.inflate(R.layout.logged_worktime_label_cell, parent, false)
-//            return PlaceHolder(inflatedView, viewType)
-//        }else{
-            val inflater = LayoutInflater.from(parent.context)
-            val inflatedView = inflater.inflate(R.layout.logged_worktime_cell, parent, false)
-            return PlaceHolder(inflatedView)
-//        }
+
+        val inflater = LayoutInflater.from(parent.context)
+        val inflatedView = inflater.inflate(R.layout.logged_worktime_cell, parent, false)
+        return PlaceHolder(inflatedView, viewType)
+
     }
 
     override fun getItemCount(): Int {
-        return loggedWorktimes.size
+        return loggedWorktimes.size + 1
     }
 
-//    override fun getItemViewType(position: Int): Int {
-//        if(position == 0) return 1
-//        else return 2
-//    }
-
-
-
-    class PlaceHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener{
+    class PlaceHolder(v: View, viewType: Int) : RecyclerView.ViewHolder(v), View.OnClickListener{
 
         var view: View = v
         var worktime: Worktime? = null
+        var viewTypeId = viewType
 
         init {
             v.setOnClickListener(this)
@@ -52,20 +49,21 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
             val context = itemView.context
         }
 
-        fun bindWorktime(worktime: Worktime){
-//                view.startWorktime.text = view.context.getString(R.string.start_worktime_label)
-//                view.startLunch.text = view.context.getString(R.string.lunch_worktime_label)
-//                view.doneLunch.text = view.context.getString(R.string.lunch_end_worktime_label)
-//                view.doneWorktime.text = view.context.getString(R.string.finish_worktime_label)
-//                view.dateWorktime.text = view.context.getString(R.string.worktime_date)
-//            }else{
+        fun bindWorktime(worktime: Worktime?, position: Int){
+            if( position == -1){
+                view.startWorktime.text = view.context.getString(R.string.start_worktime_label)
+                view.startLunch.text = view.context.getString(R.string.lunch_worktime_label)
+                view.doneLunch.text = view.context.getString(R.string.lunch_end_worktime_label)
+                view.doneWorktime.text = view.context.getString(R.string.finish_worktime_label)
+                view.dateWorktime.text = view.context.getString(R.string.worktime_date)
+            }else{
                 this.worktime = worktime
-                view.startWorktime.setText(IsEmptyOrNull(worktime.beginWorktime))
-                view.startLunch.setText(IsEmptyOrNull(worktime.beginLunch))
-                view.doneLunch.setText(IsEmptyOrNull(worktime.doneLunch))
-                view.doneWorktime.setText(IsEmptyOrNull(worktime.doneWorktime))
-                view.dateWorktime.setText(worktime.date)
-//            }
+                view.startWorktime.setText(IsEmptyOrNull(worktime!!.beginWorktime))
+                view.startLunch.setText(IsEmptyOrNull(worktime!!.beginLunch))
+                view.doneLunch.setText(IsEmptyOrNull(worktime!!.doneLunch))
+                view.doneWorktime.setText(IsEmptyOrNull(worktime!!.doneWorktime))
+                view.dateWorktime.setText(worktime!!.date)
+            }
         }
 
         fun IsEmptyOrNull(data: String?) : String{

@@ -48,8 +48,7 @@ class LogTimeActivity : AppCompatActivity() {
     private var stopWorktime: EditText? = null
     private var logWorktime: Button? = null
     private var calendarPick: CalendarView? = null
-    private val cal: Calendar
-        get() = Calendar.getInstance()
+    private val cal = Calendar.getInstance()
     private val monthSimpleDateFormat = SimpleDateFormat("MMMM", Locale.US)
     private var hour = 0
     private var minute = 0
