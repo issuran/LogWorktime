@@ -10,6 +10,7 @@
 
     <color name="colorPrimaryText">#000000</color>
     <color name="colorSecondaryText">#000000</color>
+    <color name="colorWhiteText">#FFFFFF</color>
 
     <color name="colorAccent">#76d275</color>
 </resources>

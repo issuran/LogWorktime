@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.CalendarView
 import android.widget.ImageView
 import android.widget.TextView
 import br.com.optimizer7.logworktime.Model.Worktime
@@ -41,7 +40,6 @@ class ListLoggedWorktime : AppCompatActivity() {
     private var cal = Calendar.getInstance()
     private val monthSimpleDateFormat = SimpleDateFormat("MMMM", Locale.US)
     private var txtSelectedMonth: TextView? = null
-    private var calendarPick: CalendarView? = null
     private var previousMonth: ImageView? = null
     private var nextMonth: ImageView? = null
 
@@ -82,8 +80,6 @@ class ListLoggedWorktime : AppCompatActivity() {
 
     private fun bindViews(){
 
-        calendarPick = findViewById(R.id.listCalendarView)
-        calendarPick!!.visibility=View.GONE
         previousMonth = findViewById(R.id.previousMonth)
         nextMonth = findViewById(R.id.nextMonth)
         txtSelectedMonth = findViewById(R.id.txtSelectedMonth)
@@ -142,7 +138,7 @@ class ListLoggedWorktime : AppCompatActivity() {
     private fun handleClicks() {
 
         txtSelectedMonth?.setOnClickListener({
-            DatePickerDialog(this, DatePickerDialog.OnDateSetListener { it, year, month, dayOfMonth ->
+            DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 cal.set(year, month, dayOfMonth)
 
                 updateDateWorktimeToLog()
