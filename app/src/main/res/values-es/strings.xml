@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Registro de tiempo</string>
 
-    <string name="message_welcome_user_name">Buen día : %1$s</string>
+    <string name="message_welcome_user_name">Buenos día : %1$s</string>
 
     <string name="hint_message_begin_worktime">Inicio de la Jornada</string>
     <string name="hint_message_begin_lunch">Pausa del Almuerzo</string>
