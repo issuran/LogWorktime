@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Registrar Horas Trabalhadas</string>
+
+    <string name="message_welcome_user_name">Bom dia : %1$s</string>
+
+    <string name="hint_message_begin_worktime">Inicio da Jornada</string>
+    <string name="hint_message_begin_lunch">Pausa Almoco</string>
+    <string name="hint_message_done_lunch">Volta Almoco</string>
+    <string name="hint_message_done_worktime">Fim da Jornada</string>
+
+    <string name="hint_message_click_to_log">Clique para logar sua jornada</string>
+
+    <string name="button_log_worktime">Salvar</string>
+    <string name="list_logged_worktime">Lista de Horas salvas</string>
+    <string name="logout">Sair</string>
+    <string name="log_worktime">Registrar Jornada</string>
+    <string name="leftCalendarOption"><![CDATA[<]]></string>
+    <string name="rightCalendarOption"><![CDATA[>]]></string>
+    <string name="date">Data</string>
+    <string name="worktime_date">Data da Jornada</string>
+    <string name="start_worktime_label">Inicio</string>
+    <string name="lunch_worktime_label">Almoco</string>
+    <string name="lunch_end_worktime_label">Almoco Fim</string>
+    <string name="finish_worktime_label">Saida</string>
+    <string name="month_year_label">%1$s %2$s</string>
+    <string name="success_log_worktime_message">Jornada de trabalho foi salva!</string>
+
+    <string name="start_worktime_displayed_label">%1$d:%2$d:00</string>
+    <string name="start_lunch_displayed_label">%1$d:%2$d:00</string>
+    <string name="done_lunch_displayed_label">%1$d:%2$d:00</string>
+    <string name="done_worktime_displayed_label">%1$d:%2$d:00</string>
+</resources>

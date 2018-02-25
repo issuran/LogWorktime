@@ -1,21 +1,22 @@
 <resources>
     <string name="app_name">Log Worktime</string>
 
-    <string name="message_welcome_user_name">Bom dia : %1$s</string>
+    <string name="message_welcome_user_name">Good morning : %1$s</string>
 
     <string name="hint_message_begin_worktime">Begin - Worktime</string>
     <string name="hint_message_begin_lunch">Begin - Lunch</string>
     <string name="hint_message_done_lunch">Done - Lunch</string>
     <string name="hint_message_done_worktime">Done - Worktime</string>
 
-    <string name="hint_message_click_to_log">Click to log time</string>
+    <string name="hint_message_click_to_log">Click to log worktime</string>
     
-    <string name="button_log_worktime">Log Worktime</string>
+    <string name="button_log_worktime">Save</string>
     <string name="list_logged_worktime">List Logged Worktime</string>
     <string name="logout">Logout</string>
     <string name="log_worktime">Log Worktime</string>
     <string name="leftCalendarOption"><![CDATA[<]]></string>
     <string name="rightCalendarOption"><![CDATA[>]]></string>
+    <string name="date">Date</string>
     <string name="worktime_date">Worktime Date</string>
     <string name="start_worktime_label">Start</string>
     <string name="lunch_worktime_label">Lunch</string>

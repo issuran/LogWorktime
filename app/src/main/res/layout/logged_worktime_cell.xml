@@ -3,16 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="5"
+    android:paddingLeft="8dp"
+    android:paddingStart="8dp"
+    android:paddingRight="8dp"
+    android:paddingEnd="8dp"
     android:layout_height="24dp">
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/dateWorktime"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Date"
             android:textStyle="bold"
@@ -25,7 +27,8 @@
 
         <TextView
             android:id="@+id/startWorktime"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="BW"
             android:textStyle="bold"
@@ -38,7 +41,8 @@
 
         <TextView
             android:id="@+id/startLunch"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="BL"
             android:textStyle="bold"
@@ -51,7 +55,8 @@
 
         <TextView
             android:id="@+id/doneLunch"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="DL"
             android:textSize="14sp"
@@ -64,7 +69,8 @@
 
         <TextView
             android:id="@+id/doneWorktime"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="DW"
             android:textSize="14sp"
@@ -74,8 +80,5 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/doneLunch"
             app:layout_constraintTop_toTopOf="parent" />
-
-    </android.support.constraint.ConstraintLayout>
-
 
 </LinearLayout>

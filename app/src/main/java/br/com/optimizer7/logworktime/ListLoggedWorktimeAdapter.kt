@@ -1,6 +1,7 @@
 package br.com.optimizer7.logworktime
 
 import android.content.Intent
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -55,7 +56,14 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
                 view.startLunch.text = view.context.getString(R.string.lunch_worktime_label)
                 view.doneLunch.text = view.context.getString(R.string.lunch_end_worktime_label)
                 view.doneWorktime.text = view.context.getString(R.string.finish_worktime_label)
-                view.dateWorktime.text = view.context.getString(R.string.worktime_date)
+                view.dateWorktime.text = view.context.getString(R.string.date)
+
+
+                view.startWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
+                view.startLunch.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
+                view.doneLunch.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
+                view.doneWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
+                view.dateWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
             }else{
                 this.worktime = worktime
                 view.startWorktime.setText(IsEmptyOrNull(worktime!!.beginWorktime))
@@ -63,6 +71,8 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
                 view.doneLunch.setText(IsEmptyOrNull(worktime!!.doneLunch))
                 view.doneWorktime.setText(IsEmptyOrNull(worktime!!.doneWorktime))
                 view.dateWorktime.setText(worktime!!.date)
+
+                view.dateWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.colorPrimary))
             }
         }
 
