@@ -1,32 +1,32 @@
 <resources>
-    <string name="app_name">Log Worktime</string>
+    <string name="app_name">Log Work Time</string>
 
-    <string name="message_welcome_user_name">Good morning : %1$s</string>
+    <string name="message_welcome_user_name">Good morning %1$s</string>
 
-    <string name="hint_message_begin_worktime">Begin - Worktime</string>
-    <string name="hint_message_begin_lunch">Begin - Lunch</string>
-    <string name="hint_message_done_lunch">Done - Lunch</string>
-    <string name="hint_message_done_worktime">Done - Worktime</string>
+    <string name="hint_message_begin_worktime">In Time</string>
+    <string name="hint_message_begin_lunch">Start Interval</string>
+    <string name="hint_message_done_lunch">Finish Interval</string>
+    <string name="hint_message_done_worktime">Out Time</string>
 
-    <string name="hint_message_click_to_log">Click to log worktime</string>
+    <string name="hint_message_click_to_log">Click to log work time</string>
     
     <string name="button_log_worktime">Save</string>
-    <string name="list_logged_worktime">List Logged Worktime</string>
+    <string name="list_logged_worktime">List Logged Work Time</string>
     <string name="logout">Logout</string>
     <string name="log_worktime">Log Worktime</string>
     <string name="leftCalendarOption"><![CDATA[<]]></string>
     <string name="rightCalendarOption"><![CDATA[>]]></string>
     <string name="date">Date</string>
     <string name="worktime_date">Worktime Date</string>
-    <string name="start_worktime_label">Start</string>
-    <string name="lunch_worktime_label">Lunch</string>
-    <string name="lunch_end_worktime_label">Lunch End</string>
-    <string name="finish_worktime_label">Finish</string>
+    <string name="start_worktime_label">In Time</string>
+    <string name="lunch_worktime_label">Interval</string>
+    <string name="lunch_end_worktime_label">Interval End</string>
+    <string name="finish_worktime_label">Out Time</string>
     <string name="month_year_label">%1$s %2$s</string>
-    <string name="success_log_worktime_message">Worktime has been saved!</string>
+    <string name="success_log_worktime_message">Work Time has been saved!</string>
 
-    <string name="start_worktime_displayed_label">%1$d:%2$d:00</string>
-    <string name="start_lunch_displayed_label">%1$d:%2$d:00</string>
-    <string name="done_lunch_displayed_label">%1$d:%2$d:00</string>
-    <string name="done_worktime_displayed_label">%1$d:%2$d:00</string>
+    <string name="start_worktime_displayed_label">%1$s:%2$s:00</string>
+    <string name="start_lunch_displayed_label">%1$s:%2$s:00</string>
+    <string name="done_lunch_displayed_label">%1$s:%2$s:00</string>
+    <string name="done_worktime_displayed_label">%1$s:%2$s:00</string>
 </resources>

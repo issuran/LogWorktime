@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -52,6 +53,7 @@ class LogTimeActivity : AppCompatActivity() {
     private val monthSimpleDateFormat = SimpleDateFormat("MMMM", Locale.US)
     private var hour = 0
     private var minute = 0
+    private var worktimeModel: DateWorktime? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,9 +122,9 @@ class LogTimeActivity : AppCompatActivity() {
      */
     private fun updateDateSelectedTextValue(){
         dateSelectedText =
-                ""+cal.get(Calendar.DAY_OF_MONTH)+
-                "-"+cal.get(Calendar.MONTH + 1)+
-                "-"+cal.get(Calendar.YEAR)
+                "" + cal.get(Calendar.DAY_OF_MONTH) +
+                "-"+ (cal.get(Calendar.MONTH) + 1) +
+                "-"+ cal.get(Calendar.YEAR)
     }
 
     /**
@@ -139,16 +141,13 @@ class LogTimeActivity : AppCompatActivity() {
             cal.set(year, month, dayOfMonth)
             updateDateWorktimeToLog()
 
-            beginWorktime?.setText("")
-            beginLunch?.setText("")
-            stopLunch?.setText("")
-            stopWorktime?.setText("")
+            clearFields()
         }
 
         beginWorktime?.setOnTouchListener({ _, event ->
             if( event.action == MotionEvent.ACTION_UP){
                 TimePickerDialog(this, OnTimeSetListener { _, hourOfDay, minute ->
-                    beginWorktime?.setText(getString(R.string.start_worktime_displayed_label, hourOfDay, minute))
+                    beginWorktime?.setText(getString(R.string.start_worktime_displayed_label, fixTimeLayout(hourOfDay), fixTimeLayout(minute)))
                 }, hour, minute, true).show()
             }
             true
@@ -157,7 +156,7 @@ class LogTimeActivity : AppCompatActivity() {
         beginLunch?.setOnTouchListener({ _, event ->
             if( event.action == MotionEvent.ACTION_UP){
                 TimePickerDialog(this, OnTimeSetListener { _, hourOfDay, minute ->
-                    beginLunch?.setText(getString(R.string.start_lunch_displayed_label, hourOfDay, minute))
+                    beginLunch?.setText(getString(R.string.start_lunch_displayed_label, fixTimeLayout(hourOfDay), fixTimeLayout(minute)))
                 }, hour, minute, true).show()
             }
             true
@@ -166,7 +165,7 @@ class LogTimeActivity : AppCompatActivity() {
         stopLunch?.setOnTouchListener({ _, event ->
             if( event.action == MotionEvent.ACTION_UP){
                 TimePickerDialog(this, OnTimeSetListener { _, hourOfDay, minute ->
-                    stopLunch?.setText(getString(R.string.done_lunch_displayed_label, hourOfDay, minute))
+                    stopLunch?.setText(getString(R.string.done_lunch_displayed_label, fixTimeLayout(hourOfDay), fixTimeLayout(minute)))
                 }, hour, minute, true).show()
             }
             true
@@ -175,12 +174,20 @@ class LogTimeActivity : AppCompatActivity() {
         stopWorktime?.setOnTouchListener({ _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 TimePickerDialog(this, OnTimeSetListener { _, hourOfDay, minute ->
-                    stopWorktime?.setText(getString(R.string.done_worktime_displayed_label, hourOfDay, minute))
+                    stopWorktime?.setText(getString(R.string.done_worktime_displayed_label, fixTimeLayout(hourOfDay), fixTimeLayout(minute)))
                 }, hour, minute, true).show()
             }
             true
         })
 
+    }
+
+    private fun fixTimeLayout(minute: Int) : String{
+        return if(minute in 0..9){
+            "0"+minute
+        }else{
+            minute.toString()
+        }
     }
 
     /**
@@ -189,7 +196,7 @@ class LogTimeActivity : AppCompatActivity() {
     private fun logWorktime(){
         logWorktime?.setOnClickListener({
 
-            val worktimeModel = retrieveLoggedTime()
+            retrieveLoggedTime()
 
             mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError?) {
@@ -197,14 +204,11 @@ class LogTimeActivity : AppCompatActivity() {
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                        mLogWorktimeRef.child(currentUser!!.uid)
-                                .child(currentUser!!.currentUser!!.displayName)
-                                .child(worktimeModel.yearWorktime)
-                                .child(worktimeModel.monthWorktime)
-                                .child(worktimeModel.dateWorktime)
-                                .setValue(worktimeModel.worktime)
+
+                    logWorkTimeFirebaseAsync().execute()
 
                     Snackbar.make(it,getString(R.string.success_log_worktime_message), Snackbar.LENGTH_SHORT).show()
+
                 }
             })
         })
@@ -213,7 +217,7 @@ class LogTimeActivity : AppCompatActivity() {
     /**
      * Retrieve object with input data from user
      */
-    private fun retrieveLoggedTime() : DateWorktime {
+    private fun retrieveLoggedTime() {
         val beginWorktime = beginWorktime?.text.toString()
         val beginLunch = beginLunch?.text.toString()
         val stopLunch = stopLunch?.text.toString()
@@ -221,7 +225,7 @@ class LogTimeActivity : AppCompatActivity() {
 
         updateDateWorktimeToLog()
 
-        return DateWorktime(
+        worktimeModel = DateWorktime(
                 yearSelectedText,
                 monthSelectedText,
                 dateSelectedText,
@@ -266,5 +270,34 @@ class LogTimeActivity : AppCompatActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         this.finish()
+    }
+
+    fun clearFields(){
+        beginWorktime?.setText("")
+        beginLunch?.setText("")
+        stopLunch?.setText("")
+        stopWorktime?.setText("")
+    }
+
+    inner class logWorkTimeFirebaseAsync : AsyncTask<Void, Void, String>() {
+        override fun doInBackground(vararg params: Void?): String? {
+            mLogWorktimeRef.child(currentUser!!.uid)
+                    .child(currentUser!!.currentUser!!.displayName)
+                    .child(worktimeModel?.yearWorktime)
+                    .child(worktimeModel?.monthWorktime)
+                    .child(worktimeModel?.dateWorktime)
+                    .setValue(worktimeModel?.worktime)
+            return null
+        }
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            // ...
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            clearFields()
+        }
     }
 }

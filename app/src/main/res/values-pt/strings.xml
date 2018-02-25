@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Registrar Horas</string>
 
-    <string name="message_welcome_user_name">Bom dia : %1$s</string>
+    <string name="message_welcome_user_name">Bom dia %1$s</string>
 
-    <string name="hint_message_begin_worktime">Início da Jornada</string>
-    <string name="hint_message_begin_lunch">Pausa do Almoço</string>
-    <string name="hint_message_done_lunch">Volta do Almoço</string>
-    <string name="hint_message_done_worktime">Fim da Jornada</string>
+    <string name="hint_message_begin_worktime">Entrada no Trabalho</string>
+    <string name="hint_message_begin_lunch">Intervalo</string>
+    <string name="hint_message_done_lunch">Volta do Intervalo</string>
+    <string name="hint_message_done_worktime">Saída do Trabalho</string>
 
     <string name="hint_message_click_to_log">Clique para registrar sua jornada</string>
 
@@ -18,15 +18,15 @@
     <string name="rightCalendarOption"><![CDATA[>]]></string>
     <string name="date">Data</string>
     <string name="worktime_date">Data da Jornada</string>
-    <string name="start_worktime_label">Início</string>
-    <string name="lunch_worktime_label">Almoço</string>
-    <string name="lunch_end_worktime_label">Almoço Fim</string>
+    <string name="start_worktime_label">Entrada</string>
+    <string name="lunch_worktime_label">Intervalo</string>
+    <string name="lunch_end_worktime_label">Intervalo Fim</string>
     <string name="finish_worktime_label">Saída</string>
     <string name="month_year_label">%1$s %2$s</string>
     <string name="success_log_worktime_message">Jornada de trabalho foi salva!</string>
 
-    <string name="start_worktime_displayed_label">%1$d:%2$d:00</string>
-    <string name="start_lunch_displayed_label">%1$d:%2$d:00</string>
-    <string name="done_lunch_displayed_label">%1$d:%2$d:00</string>
-    <string name="done_worktime_displayed_label">%1$d:%2$d:00</string>
+    <string name="start_worktime_displayed_label">%1$s:%2$s:00</string>
+    <string name="start_lunch_displayed_label">%1$s:%2$s:00</string>
+    <string name="done_lunch_displayed_label">%1$s:%2$s:00</string>
+    <string name="done_worktime_displayed_label">%1$s:%2$s:00</string>
 </resources>
