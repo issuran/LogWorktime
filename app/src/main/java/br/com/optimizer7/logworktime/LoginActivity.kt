@@ -3,6 +3,7 @@ package br.com.optimizer7.logworktime;
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -38,7 +39,7 @@ class LoginActivity : AppCompatActivity(){
                     .setLogo(R.mipmap.ic_launcher)
                     .setTheme(R.style.AppTheme)
                     .build(),
-                    RC_SIGN_IN);
+                    RC_SIGN_IN)
         }
     }
 
@@ -46,7 +47,6 @@ class LoginActivity : AppCompatActivity(){
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == RC_SIGN_IN) {
-            val response = IdpResponse.fromResultIntent(data)
 
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
@@ -55,7 +55,6 @@ class LoginActivity : AppCompatActivity(){
                 finish()
             } else {
                 // Sign in failed, check response for error code
-                // ...
             }
         }
     }

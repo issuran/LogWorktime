@@ -36,7 +36,7 @@ class LogTimeActivity : AppCompatActivity() {
     /**
      * Variables
      */
-    private val mRootRef: DatabaseReference = FirebaseDatabase.getInstance().getReference()
+    private val mRootRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private var dateSelectedText: String? = null
     private var monthSelectedText: String? = null
     private var yearSelectedText: String? = null
@@ -54,6 +54,7 @@ class LogTimeActivity : AppCompatActivity() {
     private var hour = 0
     private var minute = 0
     private var worktimeModel: DateWorktime? = null
+    var rootView: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -205,10 +206,13 @@ class LogTimeActivity : AppCompatActivity() {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot?) {
 
-                    logWorkTimeFirebaseAsync().execute()
+                    rootView = it
 
-                    Snackbar.make(it,getString(R.string.success_log_worktime_message), Snackbar.LENGTH_SHORT).show()
+                    LogWorkTimeFirebaseAsync().execute()
 
+                    clearFields()
+
+                    Snackbar.make(rootView!!,getString(R.string.success_log_worktime_message), Snackbar.LENGTH_SHORT).show()
                 }
             })
         })
@@ -279,7 +283,9 @@ class LogTimeActivity : AppCompatActivity() {
         stopWorktime?.setText("")
     }
 
-    inner class logWorkTimeFirebaseAsync : AsyncTask<Void, Void, String>() {
+    @SuppressLint("StaticFieldLeak")
+    inner class LogWorkTimeFirebaseAsync : AsyncTask<Void, Void, String>() {
+
         override fun doInBackground(vararg params: Void?): String? {
             mLogWorktimeRef.child(currentUser!!.uid)
                     .child(currentUser!!.currentUser!!.displayName)
@@ -288,16 +294,6 @@ class LogTimeActivity : AppCompatActivity() {
                     .child(worktimeModel?.dateWorktime)
                     .setValue(worktimeModel?.worktime)
             return null
-        }
-
-        override fun onPreExecute() {
-            super.onPreExecute()
-            // ...
-        }
-
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-            clearFields()
         }
     }
 }

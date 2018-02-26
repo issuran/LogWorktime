@@ -24,7 +24,7 @@ class ListLoggedWorktime : AppCompatActivity() {
     /**
      * Variables
      */
-    private val mRootRef: DatabaseReference = FirebaseDatabase.getInstance().getReference()
+    private val mRootRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val listOfWorktime: MutableList<Worktime> = mutableListOf()
     private var mRecyclerView: RecyclerView? = null
     private var mAdapter: RecyclerView.Adapter<ListLoggedWorktimeAdapter.PlaceHolder>? = null
@@ -38,7 +38,7 @@ class ListLoggedWorktime : AppCompatActivity() {
     private val mLogWorktimeRef = mRootRef.child("logworktimes")
     private lateinit var currentUser: FirebaseAuth
     private var cal = Calendar.getInstance()
-    private val monthSimpleDateFormat = SimpleDateFormat("MMMM", Locale.US)
+    private val monthSimpleDateFormat = SimpleDateFormat("MMMM", getCurrentLocale())
     private var txtSelectedMonth: TextView? = null
     private var previousMonth: ImageView? = null
     private var nextMonth: ImageView? = null
@@ -219,7 +219,7 @@ class ListLoggedWorktime : AppCompatActivity() {
     /**
      * Logout function
      */
-    fun logout(){
+    private fun logout(){
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnCompleteListener({
@@ -228,5 +228,9 @@ class ListLoggedWorktime : AppCompatActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         this.finish()
+    }
+
+    private fun getCurrentLocale() : Locale{
+        return Locale.getDefault()
     }
 }

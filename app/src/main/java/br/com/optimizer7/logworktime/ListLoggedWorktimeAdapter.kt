@@ -1,6 +1,5 @@
 package br.com.optimizer7.logworktime
 
-import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -10,11 +9,10 @@ import br.com.optimizer7.logworktime.Model.Worktime
 import kotlinx.android.synthetic.main.logged_worktime_cell.view.*
 
 class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>) : RecyclerView.Adapter<ListLoggedWorktimeAdapter.PlaceHolder>(){
-    val mDataSet: MutableList<Worktime> = mutableListOf()
 
     override fun onBindViewHolder(holder: ListLoggedWorktimeAdapter.PlaceHolder, position: Int) {
         if(position == 0){
-            val itemWorktime = null
+            val itemWorktime = Worktime()
             holder.bindWorktime(itemWorktime, position - 1)
         }else{
             if(itemCount >= 1){
@@ -28,7 +26,7 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
 
         val inflater = LayoutInflater.from(parent.context)
         val inflatedView = inflater.inflate(R.layout.logged_worktime_cell, parent, false)
-        return PlaceHolder(inflatedView, viewType)
+        return PlaceHolder(inflatedView)
 
     }
 
@@ -36,21 +34,12 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
         return loggedWorktimes.size + 1
     }
 
-    class PlaceHolder(v: View, viewType: Int) : RecyclerView.ViewHolder(v), View.OnClickListener{
+    class PlaceHolder(v: View) : RecyclerView.ViewHolder(v){
 
-        var view: View = v
-        var worktime: Worktime? = null
-        var viewTypeId = viewType
+        private var view: View = v
+        private var worktime: Worktime? = null
 
-        init {
-            v.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            val context = itemView.context
-        }
-
-        fun bindWorktime(worktime: Worktime?, position: Int){
+        fun bindWorktime(worktime: Worktime, position: Int){
             if( position == -1){
                 view.startWorktime.text = view.context.getString(R.string.start_worktime_label)
                 view.startLunch.text = view.context.getString(R.string.lunch_worktime_label)
@@ -59,29 +48,28 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
                 view.dateWorktime.text = view.context.getString(R.string.date)
 
 
-                view.startWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
-                view.startLunch.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
-                view.doneLunch.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
-                view.doneWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
-                view.dateWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.primary_dark_material_dark))
+                view.startWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.colorBlackText))
+                view.startLunch.setTextColor(ContextCompat.getColor(view.context, R.color.colorBlackText))
+                view.doneLunch.setTextColor(ContextCompat.getColor(view.context, R.color.colorBlackText))
+                view.doneWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.colorBlackText))
+                view.dateWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.colorBlackText))
             }else{
                 this.worktime = worktime
-                view.startWorktime.setText(IsEmptyOrNull(worktime!!.beginWorktime))
-                view.startLunch.setText(IsEmptyOrNull(worktime!!.beginLunch))
-                view.doneLunch.setText(IsEmptyOrNull(worktime!!.doneLunch))
-                view.doneWorktime.setText(IsEmptyOrNull(worktime!!.doneWorktime))
-                view.dateWorktime.setText(worktime!!.date)
+                view.startWorktime.text = isEmptyOrNull(worktime.beginWorktime)
+                view.startLunch.text = isEmptyOrNull(worktime.beginLunch)
+                view.doneLunch.text = isEmptyOrNull(worktime.doneLunch)
+                view.doneWorktime.text = isEmptyOrNull(worktime.doneWorktime)
+                view.dateWorktime.text = worktime.date
 
                 view.dateWorktime.setTextColor(ContextCompat.getColor(view.context, R.color.colorPrimary))
             }
         }
 
-        fun IsEmptyOrNull(data: String?) : String{
-            if(data.equals("") || data == null){
-                return "N/A"
-            }
-            else{
-                return data
+        private fun isEmptyOrNull(data: String?) : String{
+            return if(data.equals("") || data == null){
+                "N/A"
+            } else{
+                data
             }
         }
     }
