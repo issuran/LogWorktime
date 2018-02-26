@@ -25,6 +25,8 @@ Tiago Oliveira
 
 - Material Design
 
+- Support for English, Portuguese and Spanish users
+
 # Pendencies
 - Improve UI/UX
 
@@ -32,10 +34,9 @@ Tiago Oliveira
 
 - Rewrite code to use MVC
 
-![1](https://user-images.githubusercontent.com/8193383/36129692-98902f0e-104f-11e8-95f8-d0f2ec88700c.png)
-![2](https://user-images.githubusercontent.com/8193383/36129693-98af6ce8-104f-11e8-89d7-1c79d6d7e379.png)
-![3](https://user-images.githubusercontent.com/8193383/36129694-98d19d36-104f-11e8-86c2-a618a11e2b75.png)
-
+# The Road So Far
+Log Work Time v.0.7
+![Log Work Time v.0.7](https://user-images.githubusercontent.com/8193383/36648697-9f3f5f48-1a75-11e8-891b-89ed4132fbd3.png)
 
 # Special Thanks
 https://developers.google.com/sheets/api/quickstart/android#step_6_run_the_app
