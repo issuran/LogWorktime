@@ -55,6 +55,7 @@ class LogTimeActivity : AppCompatActivity() {
     private var minute = 0
     private var worktimeModel: DateWorktime? = null
     var rootView: View? = null
+    private var dayLoggedWorkTime: Worktime? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +82,10 @@ class LogTimeActivity : AppCompatActivity() {
         handleSelectWorktime()
 
         logWorktime()
+
+        updateDateWorktimeToLog()
+
+        retrieveDayLoggedWorkTime()
     }
 
     /**
@@ -95,6 +100,7 @@ class LogTimeActivity : AppCompatActivity() {
         updateMonthValue()
         updateYearValue()
         updateDateSelectedTextValue()
+        retrieveDayLoggedWorkTime()
     }
 
     /**
@@ -210,8 +216,6 @@ class LogTimeActivity : AppCompatActivity() {
 
                     LogWorkTimeFirebaseAsync().execute()
 
-                    clearFields()
-
                     Snackbar.make(rootView!!,getString(R.string.success_log_worktime_message), Snackbar.LENGTH_SHORT).show()
                 }
             })
@@ -234,6 +238,46 @@ class LogTimeActivity : AppCompatActivity() {
                 monthSelectedText,
                 dateSelectedText,
                 Worktime(beginWorktime, beginLunch, stopLunch, stopWorktime, dateSelectedText, daySelected))
+    }
+
+    /**
+     * Retrieve object with the dates logged for this day ( the day selected )
+     */
+    private fun retrieveDayLoggedWorkTime(){
+
+        mLogWorktimeRef.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError?) {
+
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot?) {
+
+                dayLoggedWorkTime = dataSnapshot
+                        ?.child(currentUser!!.uid)
+                        ?.child(currentUser!!.currentUser!!.displayName)
+                        ?.child(yearSelectedText)
+                        ?.child(monthSelectedText)
+                        ?.child(dateSelectedText)
+                        ?.getValue<Worktime>(Worktime::class.java)
+
+                if(dayLoggedWorkTime != null){
+                    fillFields()
+                }else{
+                    clearFields()
+                }
+            }
+        })
+    }
+
+    /**
+     * Fill fields with logged work time from selected day
+     */
+    private fun fillFields(){
+        beginWorktime?.setText(dayLoggedWorkTime!!.beginWorktime)
+        beginLunch?.setText(dayLoggedWorkTime!!.beginLunch)
+        stopLunch?.setText(dayLoggedWorkTime!!.doneLunch)
+        stopWorktime?.setText(dayLoggedWorkTime!!.doneWorktime)
     }
 
     /**
