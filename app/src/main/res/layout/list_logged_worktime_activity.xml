@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:focusableInTouchMode="true">
 
@@ -26,11 +26,11 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/titleRecyclerView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:id="@+id/titleRecyclerView2"
+                android:paddingTop="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
@@ -87,12 +87,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@+id/titleRecyclerView2">
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    >
+                    android:layout_marginTop="16dp">
 
                 </android.support.v7.widget.RecyclerView>
             </ScrollView>
@@ -101,7 +101,11 @@
 
     </ScrollView>
 
-
-
+    <Button
+        android:id="@+id/btSendEmail"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/send_to_me" />
 
 </LinearLayout>
