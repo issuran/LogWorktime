@@ -172,8 +172,6 @@ class ListLoggedWorktime : AppCompatActivity() {
 
             intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(currentUser!!.email!!))
 
-            val appName = getString(R.string.app_name)
-
             intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.send_email_subject_label, getString(R.string.app_name), monthSelectedText))
 
             intent.putExtra(Intent.EXTRA_TEXT, buildBodyEmailLoggedWorkTimeSheet())
