@@ -34,6 +34,7 @@ class ListLoggedWorktime : AppCompatActivity() {
     private var mLayoutManager: RecyclerView.LayoutManager? = null
     private var dateSelectedText: String? = null
     private var monthSelectedText: String? = null
+    private var monthSelectedDisplayText: String? = null
     private var yearSelectedText: String? = null
     private var daySelected = 0
     private var monthSelected = 0
@@ -42,6 +43,7 @@ class ListLoggedWorktime : AppCompatActivity() {
     private var currentUser: FirebaseUser? = null
     private var cal = Calendar.getInstance()
     private val monthSimpleDateFormat = SimpleDateFormat("MMMM", getCurrentLocale())
+    private val monthDatabaseFormat = SimpleDateFormat("MMMM", Locale.US)
     private var txtSelectedMonth: TextView? = null
     private var previousMonth: ImageView? = null
     private var nextMonth: ImageView? = null
@@ -104,7 +106,7 @@ class ListLoggedWorktime : AppCompatActivity() {
      * Set text view with month and year values
      */
     private fun updateMonthYearLabel(){
-        txtSelectedMonth!!.text = getString(R.string.month_year_label, monthSelectedText, yearSelectedText)
+        txtSelectedMonth!!.text = getString(R.string.month_year_label, monthSelectedDisplayText, yearSelectedText)
     }
 
     /**
@@ -118,7 +120,8 @@ class ListLoggedWorktime : AppCompatActivity() {
      * Get the month's full name
      */
     private fun updateMonthValue(){
-        monthSelectedText = monthSimpleDateFormat.format(cal.time)
+        monthSelectedText = monthDatabaseFormat.format(cal.time)
+        monthSelectedDisplayText = monthSimpleDateFormat.format(cal.time)
         monthSelected = cal.get(Calendar.MONTH)
     }
 
