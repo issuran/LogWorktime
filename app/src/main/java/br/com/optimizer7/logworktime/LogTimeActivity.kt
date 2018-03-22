@@ -254,7 +254,7 @@ class LogTimeActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot?) {
 
                 dayLoggedWorkTime = dataSnapshot
-                        ?.child(currentUser!!.uid)
+                        ?.child(currentUser!!.currentUser!!.uid)
                         ?.child(currentUser!!.currentUser!!.displayName)
                         ?.child(yearSelectedText)
                         ?.child(monthSelectedText)
@@ -331,7 +331,7 @@ class LogTimeActivity : AppCompatActivity() {
     inner class LogWorkTimeFirebaseAsync : AsyncTask<Void, Void, String>() {
 
         override fun doInBackground(vararg params: Void?): String? {
-            mLogWorktimeRef.child(currentUser!!.uid)
+            mLogWorktimeRef.child(currentUser!!.currentUser!!.uid)
                     .child(currentUser!!.currentUser!!.displayName)
                     .child(worktimeModel?.yearWorktime)
                     .child(worktimeModel?.monthWorktime)
