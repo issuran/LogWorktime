@@ -19,6 +19,7 @@ import android.widget.EditText
 import br.com.optimizer7.logworktime.Model.DateWorktime
 import br.com.optimizer7.logworktime.Model.Worktime
 import com.firebase.ui.auth.AuthUI
+import com.google.api.client.googleapis.util.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -36,12 +37,11 @@ class LogTimeActivity : AppCompatActivity() {
     /**
      * Variables
      */
-    private val mRootRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private var dateSelectedText: String? = null
     private var monthSelectedText: String? = null
     private var yearSelectedText: String? = null
     private var daySelected: Int = 0
-    private val mLogWorktimeRef = mRootRef.child("logworktimes")
+    private var mLogWorktimeRef: DatabaseReference? = null
     private var currentUser: FirebaseAuth? = null
     private var beginWorktime: EditText? = null
     private var beginLunch: EditText? = null
@@ -65,6 +65,8 @@ class LogTimeActivity : AppCompatActivity() {
         setSupportActionBar(myToolbar)
 
         myToolbar.inflateMenu(R.menu.main_menu)
+
+        mLogWorktimeRef = FirebaseDatabase.getInstance().reference.getDatabase()!!.reference.child("logworktimes")
 
         // Check if user is signed in (non-null) and update UI accordingly.
         currentUser = FirebaseAuth.getInstance()
@@ -205,7 +207,7 @@ class LogTimeActivity : AppCompatActivity() {
 
             retrieveLoggedTime()
 
-            mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
+            mLogWorktimeRef!!.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError?) {
 
                 }
@@ -245,7 +247,7 @@ class LogTimeActivity : AppCompatActivity() {
      */
     private fun retrieveDayLoggedWorkTime(){
 
-        mLogWorktimeRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        mLogWorktimeRef!!.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError?) {
 
@@ -331,7 +333,7 @@ class LogTimeActivity : AppCompatActivity() {
     inner class LogWorkTimeFirebaseAsync : AsyncTask<Void, Void, String>() {
 
         override fun doInBackground(vararg params: Void?): String? {
-            mLogWorktimeRef.child(currentUser!!.currentUser!!.uid)
+            mLogWorktimeRef!!.child(currentUser!!.currentUser!!.uid)
                     .child(currentUser!!.currentUser!!.displayName)
                     .child(worktimeModel?.yearWorktime)
                     .child(worktimeModel?.monthWorktime)

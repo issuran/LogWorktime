@@ -69,7 +69,7 @@ class ListLoggedWorktimeAdapter(private val loggedWorktimes: ArrayList<Worktime>
             return if(data.equals("") || data == null){
                 "N/A"
             } else{
-                data
+                data.removeRange(data.length - 3, data.length)
             }
         }
     }
