@@ -214,30 +214,28 @@ class ListLoggedWorktime : AppCompatActivity() {
     private fun loadLoggedWorktime(){
 
         mLogWorktimeRef.addValueEventListener(object : ValueEventListener {
-
-            override fun onCancelled(p0: DatabaseError?) {
-
+            override fun onCancelled(p0: DatabaseError) {
+                print("Nothing here")
             }
 
-            override fun onDataChange(dataSnapshot: DataSnapshot?) {
-
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
                 listOfWorktime.clear()
                 mRecyclerView!!.invalidate()
                 mAdapter!!.notifyDataSetChanged()
 
                 dataSnapshot
                         ?.child(currentUser!!.uid)
-                        ?.child(currentUser!!.displayName)
-                        ?.child(yearSelectedText)
-                        ?.child(monthSelectedText)
+                        ?.child(currentUser!!.displayName.toString())
+                        ?.child(yearSelectedText.toString())
+                        ?.child(monthSelectedText.toString())
                         ?.children
                         ?.mapNotNullTo(listOfWorktime){
-                    it.getValue<Worktime>(Worktime::class.java)
-                }
+                            it.getValue<Worktime>(Worktime::class.java)
+                        }
 
                 listOfWorktime.sortWith(compareBy(Worktime::id))
-
             }
+
         })
     }
 

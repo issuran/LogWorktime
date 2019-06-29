@@ -208,18 +208,18 @@ class LogTimeActivity : AppCompatActivity() {
             retrieveLoggedTime()
 
             mLogWorktimeRef!!.addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError?) {
-
+                override fun onCancelled(p0: DatabaseError) {
+                    print("Nothing to do")
                 }
 
-                override fun onDataChange(dataSnapshot: DataSnapshot?) {
-
+                override fun onDataChange(p0: DataSnapshot) {
                     rootView = it
 
                     LogWorkTimeFirebaseAsync().execute()
 
                     Snackbar.make(rootView!!,getString(R.string.success_log_worktime_message), Snackbar.LENGTH_SHORT).show()
                 }
+
             })
         })
     }
@@ -248,19 +248,17 @@ class LogTimeActivity : AppCompatActivity() {
     private fun retrieveDayLoggedWorkTime(){
 
         mLogWorktimeRef!!.addListenerForSingleValueEvent(object : ValueEventListener {
-
-            override fun onCancelled(p0: DatabaseError?) {
-
+            override fun onCancelled(p0: DatabaseError) {
+                print("Nothing to do")
             }
 
-            override fun onDataChange(dataSnapshot: DataSnapshot?) {
-
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
                 dayLoggedWorkTime = dataSnapshot
                         ?.child(currentUser!!.currentUser!!.uid)
-                        ?.child(currentUser!!.currentUser!!.displayName)
-                        ?.child(yearSelectedText)
-                        ?.child(monthSelectedText)
-                        ?.child(dateSelectedText)
+                        ?.child(currentUser!!.currentUser!!.displayName.toString())
+                        ?.child(yearSelectedText.toString())
+                        ?.child(monthSelectedText.toString())
+                        ?.child(dateSelectedText.toString())
                         ?.getValue<Worktime>(Worktime::class.java)
 
                 if(dayLoggedWorkTime != null){
@@ -269,6 +267,7 @@ class LogTimeActivity : AppCompatActivity() {
                     clearFields()
                 }
             }
+
         })
     }
 
@@ -334,10 +333,10 @@ class LogTimeActivity : AppCompatActivity() {
 
         override fun doInBackground(vararg params: Void?): String? {
             mLogWorktimeRef!!.child(currentUser!!.currentUser!!.uid)
-                    .child(currentUser!!.currentUser!!.displayName)
-                    .child(worktimeModel?.yearWorktime)
-                    .child(worktimeModel?.monthWorktime)
-                    .child(worktimeModel?.dateWorktime)
+                    .child(currentUser!!.currentUser!!.displayName.toString())
+                    .child(worktimeModel?.yearWorktime.toString())
+                    .child(worktimeModel?.monthWorktime.toString())
+                    .child(worktimeModel?.dateWorktime.toString())
                     .setValue(worktimeModel?.worktime)
             return null
         }
