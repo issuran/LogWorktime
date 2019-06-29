@@ -3,10 +3,6 @@ package br.com.optimizer7.logworktime
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.text.Html
 import android.view.Menu
 import android.view.MenuItem
@@ -14,6 +10,10 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import br.com.optimizer7.logworktime.Model.Worktime
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth

@@ -1,10 +1,10 @@
 package br.com.optimizer7.logworktime
 
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import br.com.optimizer7.logworktime.Model.Worktime
 import kotlinx.android.synthetic.main.logged_worktime_cell.view.*
 
