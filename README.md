@@ -1,9 +1,9 @@
-# LogWorktime
+# Log Worktime
 Simple app to log daily worktime
 
 # What is it?
 
-LogWorktime is a basic app, where I gonna develop from scratch to log my daily worktime.
+Log Worktime is a basic app, where I gonna develop from scratch to log my daily worktime.
 
 # The Road So Far
 Log Work Time v.0.7
