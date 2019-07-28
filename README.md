@@ -9,7 +9,7 @@ Log Worktime is a basic app, where I gonna develop from scratch to log my daily 
 Log Work Time v.0.7
 ![Log Work Time v.0.7](https://user-images.githubusercontent.com/8193383/36648697-9f3f5f48-1a75-11e8-891b-89ed4132fbd3.png)
 
-# Bugs
+# Bugs :bug:
 - Report to me by tiago_fernandes89@hotmail.com
 
 # Done
