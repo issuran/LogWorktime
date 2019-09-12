@@ -1,6 +1,8 @@
 # Log Worktime
 Simple app to log daily worktime
 
+Google Play: https://play.google.com/store/apps/details?id=br.com.optimizer7.logworktime&hl=en
+
 # What is it?
 
 Log Worktime is a basic app, where I gonna develop from scratch to log my daily worktime.
